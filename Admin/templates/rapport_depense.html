@@ -1,0 +1,287 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+<body>
+<!-- loader Start -->
+<style>
+    /* Style pour les select */
+    select {
+        border-radius: 5px; /* Bord arrondi */
+        border: 1px solid #ccc; /* Bordure */
+        padding: 5px; /* Espacement interne */
+        font-size: 16px; /* Taille de la police */
+        width: 100px; /* Largeur */
+    }
+
+    /* Style pour les inputs */
+    input[type="submit"] {
+        border-radius: 5px; /* Bord arrondi */
+        border: 1px solid #ccc; /* Bordure */
+        padding: 5px 10px; /* Espacement interne */
+        font-size: 160px; /* Taille de la police */
+        cursor: pointer; /* Curseur en main */
+    }
+    button {
+        border-radius: 5px; /* Bord arrondi */
+        border: 1px solid #ccc; /* Bordure */
+        font-size: 16px; /* Taille de la police */
+        cursor: pointer; /* Curseur en main */
+        background-color: #6A4ECCFF; /* Couleur de fond */
+        color: #FFFFFF;
+    }
+
+    /* Au survol du bouton */
+    button:hover {
+        background-color: #858181; /* Couleur de fond au survol */
+    }
+
+    .zoom-on-hover {
+        transition: transform 0.3s ease-in-out; /* Ajoute une transition douce pour l'effet de zoom */
+    }
+
+    .zoom-on-hover:hover {
+        transform: scale(2); /* Applique le zoom au survol */
+    }
+
+    .zoom-on-hover {
+        transition: transform 0.3s ease-in-out; /* Ajoute une transition douce pour l'effet de zoom */
+    }
+
+    .zoom-on-hover:hover {
+        transform: scale(2); /* Applique le zoom au survol */
+    }
+</style>
+<div id="loading">
+    <div id="loading-center">
+    </div>
+</div>
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    <!-- Sidebar  -->
+    {% include 'slide_admin.html' %}
+    {% include 'top_navbar_admin.html' %}
+    <!-- TOP Nav Bar -->
+    <!-- TOP Nav Bar END -->
+    <!-- Page Content  -->
+    <div id="content-page" class="content-page">
+        <div class="container-fluid">
+            <form method="post">
+
+
+                <strong>Afficher les depenses sur les véhicules du :</strong>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-2" style="width: 100%">
+                        <label for="date_debut_periode"></label>
+                        <input required type="date" class="form-control" id="debut_periode" placeholder="" name="date_debut_periode">
+                    </div>
+                    <div class="col-md-2" style="width: 100%">
+                        <label for="date_fin_periode"></label>
+                        <input type="date" class="form-control" id="fin_periode" placeholder="" name="date_fin_periode">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="mt-4">Afficher</button>
+                    </div>
+                </div>
+
+
+            </form>
+            <div>
+                <canvas id="myChart" width="300" height="100" style="margin-top: 20px"></canvas>
+                {% if  debut  and  fin  %}
+                    <div class="text-right">
+                        <button class="btn btn-primary " onclick="printCanvas()" >IMPRIMER</button>
+                    </div>
+                {% endif %}
+            </div>
+            {% if  debut  and  fin  %}
+
+                <div class="text-center mt-3 font-size-18 font-weight-bold bd-highlight" style="text-decoration: underline"> DEPENSE  PAR VEHICULE DU {{ debut }} au {{ fin }}</div>
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between">
+                            <div class="iq-header-title">
+                                <h4 class="card-title">RAPPORT DEPENSE GLOBAL  </h4>
+                            </div>
+                        </div>
+                        <div class="iq-card-body">
+                            <div>
+                                <div class="row justify-content-between">
+                                    <div class="col-sm-12 col-md-12">
+                                        <div id="user_list_datatable_info" class="dataTables_filter">
+                                            <form method="post" action="{% url 'admins:rapport_depense_pdf' %}" target="_blank">
+                                                <div class="row">
+
+                                                    {% csrf_token %}
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> Vehicule</label>
+                                                        <select class="form-control" id="Selectvehicule" name="vehicule" style="width: 100%;">
+                                                            <option value="">Sélectionner un vehicule</option>
+                                                            {% for voiture in vehicule %}
+                                                                <option value="{{ voiture.id }}">{{ voiture }} </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> DE</label>
+                                                        <input required type="date" class="form-control" id="date_debut_periode" placeholder="" name="date_debut_periode">
+
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> A</label>
+                                                        <input type="date" class="form-control" id="date_fin_periode" placeholder="" name="date_fin_periode">
+
+                                                    </div>
+                                                    <div class="col-12 mt-5 text-right">
+                                                        <button type="submit">VISUALISER</button>
+                                                        <button type="reset">RESET</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper END -->
+<!-- Footer -->
+{% include 'footer.html' %}
+
+
+
+<script>
+    // Bloquer le calendrier à la date du jour
+    let today = new Date();
+    let date = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let year = today.getFullYear();
+
+    today = year + '-' + month + '-' + date;
+
+    // Mettre le minimum de l'input des dates pour le premier champ
+    document.getElementById("date_debut_periode").max = today;
+    document.getElementById("date_fin_periode").max = today;
+
+    // Mettre le minimum de l'input des dates pour le deuxième champ
+    document.getElementById("debut_periode").max = today;
+    document.getElementById("fin_periode").max = today;
+
+    // Récupération des éléments d'entrée pour le premier champ
+    var dateDebutInput1 = document.getElementById('date_debut_periode');
+    var dateFinInput1 = document.getElementById('date_fin_periode');
+
+    // Récupération des éléments d'entrée pour le deuxième champ
+    var dateDebutInput2 = document.getElementById('debut_periode');
+    var dateFinInput2 = document.getElementById('fin_periode');
+
+    // Écouteur d'événement pour les changements de date de début pour le premier champ
+    dateDebutInput1.addEventListener('input', function() {
+        // Convertir la valeur du champ de date de début en objet Date
+        var dateDebut1 = new Date(dateDebutInput1.value);
+
+        // Ajouter un jour à la date de début pour obtenir la date minimale de la date de fin pour le premier champ
+        var dateMinFin1 = new Date(dateDebut1);
+        dateMinFin1.setDate(dateMinFin1.getDate() + 1);
+
+        // Mettre à jour la propriété min du champ de date de fin pour le premier champ
+        dateFinInput1.min = dateMinFin1.toISOString().split('T')[0];
+    });
+
+    // Écouteur d'événement pour les changements de date de début pour le deuxième champ
+    dateDebutInput2.addEventListener('input', function() {
+        // Convertir la valeur du champ de date de début en objet Date
+        var dateDebut2 = new Date(dateDebutInput2.value);
+
+        // Ajouter un jour à la date de début pour obtenir la date minimale de la date de fin pour le deuxième champ
+        var dateMinFin2 = new Date(dateDebut2);
+        dateMinFin2.setDate(dateMinFin2.getDate() + 1);
+
+        // Mettre à jour la propriété min du champ de date de fin pour le deuxième champ
+        dateFinInput2.min = dateMinFin2.toISOString().split('T')[0];
+    });
+</script>
+
+<script>
+    // Fonction pour générer des couleurs aléatoires
+    function generateRandomColors(numColors) {
+        var colors = [];
+        for (var i = 0; i < numColors; i++) {
+            var color = '#';
+            for (var j = 0; j < 6; j++) {
+                color += '0123456789ABCDEF'[Math.floor(Math.random() * 16)];
+            }
+            colors.push(color);
+        }
+        return colors;
+    }
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var labels = {{ labels|safe }};
+    var data = {{ data|safe }};
+    var backgroundColors = generateRandomColors(labels.length);
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false // Désactive la légende
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+</script>
+<script>
+    function printCanvas() {
+        var canvas = document.getElementById('myChart');
+        var ctx = canvas.getContext('2d');
+
+        // Dessiner quelque chose sur le canvas si nécessaire
+
+        // Attendre un court délai pour permettre au canvas d'être correctement rendu
+        setTimeout(function() {
+            // Ouvrir une nouvelle fenêtre avec le contenu du canvas
+            var win = window.open('', '', 'width=' + canvas.width + ',height=' + canvas.height);
+            win.document.write('<html><head><title>Impression</title></head><body>');
+            win.document.write('<img src="' + canvas.toDataURL() + '" style="width:' + canvas.width + 'px; height:' + canvas.height + 'px;"/>');
+            win.document.write('</body></html>');
+            win.document.close();
+
+            // Attendre un court délai supplémentaire pour permettre au contenu d'être chargé dans la nouvelle fenêtre
+            setTimeout(function() {
+                // Imprimer la fenêtre
+                win.print();
+            }, 100);
+        }, 100);
+    }
+</script>
+ <script>
+
+        $('#Selectvehicule').select2();
+    </script>
+</body>
+{% endblock %}

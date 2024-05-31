@@ -1,0 +1,91 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+
+    {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+
+   <!-- Page Content  -->
+
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+               <div class="row">
+            {% if user.is_authenticated %}
+                  <div class="col-sm-12">
+                     <div class="iq-card">
+
+                        <div class="iq-card-body profile-page p-0">
+                           <div class="profile-header">
+                              <div class="cover-container">
+                                 <img src="{% static 'images/page-img/profil_img.jpg' %}" alt="profile-bg" class="rounded img-fluid">
+                              </div>
+                              <div class="profile-info p-4">
+                                 <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                       <div class="user-detail pl-5">
+                                          <div class="d-flex flex-wrap align-items-center">
+                                             <div class="profile-img pr-4">
+                                                  {% if user.image  %}
+                                                   <img src="{{ user.image.url}}" alt="profile-img" class="avatar-130 img-fluid" />
+                                                      {% else  %}
+                                                         <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                                             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                                                         </svg>
+                                                 {% endif  %}
+                                             </div>
+                                             <div class="profile-detail d-flex align-items-center">
+                                                <h3>{{ user.nom|title}} {{ user.prenom|title}} - <span style="color: #f799a3">{{ user.roles|title}}</span></h3>
+                                                 <p class=""> <strong style="color: red">  </strong> </p>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+
+                           </div>
+                        </div>
+                     </div>
+
+                        <div  class="iq-card"  role="tabpanel">
+                                 <div class="iq-card">
+                                    <div class="iq-card-header d-flex justify-content-between">
+                                       <div class="iq-header-title">
+                                          <h4 class="card-title"> <strong>  * Mes informations personnelles </strong> </h4>
+                                       </div>
+                                    </div>
+                                    <div class="iq-card-body">
+{#                                      <div class="user-bio">#}
+{#                                          <p>Tart I love sugar plum I love oat cake. Sweet roll caramels I love jujubes. Topping cake wafer.</p>#}
+{#                                      </div>#}
+                                      <div class="mt-2">
+                                      <h6> <strong>  Nom d'utilisateur : </strong> </h6>
+                                       <p>{{ user.username|title }}</p>
+                                      </div>
+
+                                      <div class="mt-2">
+                                     <strong> <strong>  Adresse mail : </strong> </strong>
+                                       <p><a href=""> {{ user.email }}</a></p>
+                                      </div>
+                                    </div>
+                                 </div>
+                              </div>
+
+                        </div>
+      {% endif %}
+                  </div>
+
+
+                  </div>
+               </div>
+            </div>
+
+
+
+     {% include 'footer.html' %}
+</body>
+{% endblock %}
+ <!-- Wrapper END -->

@@ -1,0 +1,559 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+        /* Custom modal size */
+        .modal-custom {
+            max-width: 90%; /* Adjust as needed */
+        }
+        .modal-dialog.modal-custom .modal-content {
+            width: 100%; /* Ensure full width */
+
+        }
+        .modal-photo {
+            max-width: 40%; /* Ajustez la largeur maximale selon vos besoins */
+            min-width: 40%; /* Ajustez la largeur minimale selon vos besoins */
+            max-height: 300px; /* Ajustez la hauteur maximale selon vos besoins */
+            min-height: 300px; /* Ajustez la hauteur minimale selon vos besoins */
+            margin-left: 50px /* Ajustez l'espace entre entre les photos selon vos besoins */;
+            margin-bottom: 50px /* Ajustez l'espace entre entre les photos selon vos besoins */;
+        }
+        #photo-container{
+
+            max-height: 300px; /* Définir la hauteur maximale selon vos besoins */
+            overflow-y: auto; /* Activer la barre de défilement verticale si nécessaire */
+        }
+        #motifParagraph,
+        #dureeParagraph{
+        }
+
+        .hiddenRefuserForm {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+    </style>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group mb-0">
+                            <form class="mr-3 position-relative" method="get" action="{% url 'deplacement:deplacement_encours_search' %}">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="search" value="{{ request.GET.q }}" name="q" placeholder="Rechercher conducteur, marque, modèle ou matricule">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Rechercher</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 ms-0" style="margin-top: 0">
+                        {% if no_results %}
+                            <p>Aucun résultat trouvé pour la recherche <span class="text-danger">"{{ request.GET.q }}"</span>.</p>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="col-sm-12">
+                        <div class="iq-card">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h2 class="card-title">Liste des tous les déplacements en cours <i class="ri-send-plane-2-fill"></i></h2>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <div class="table-responsive">
+                                    <table id="user-list-table" class="table table-striped table-borderless mt-4" role="grid" aria-describedby="user-list-page-info">
+                                        <thead>
+                                        <tr class="table-danger">
+                                            <th>Conducteur</th>
+                                            <th>Véhicule</th>
+                                            <th>Date de départ</th>
+                                            <th>Description</th>
+                                            <th>Durée</th>
+                                            <th>Kilométrage</th>
+                                            <th>Modifier</th>
+                                            <th>Annuler</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        {% if deplacements %}
+                                            {% for deplacement in deplacements %}
+                                                <tr>
+                                                    <td>{{ deplacement.conducteur }}</td>
+                                                    <td>{{ deplacement.vehicule }}</td>
+                                                    <td>{{ deplacement.date_depart }}</td>
+                                                    <td>{{ deplacement.description }}</td>
+                                                    <td>{{ deplacement.duree_deplacement }}</td>
+                                                    <td>{{ deplacement.kilometrage_depart }} Km/h</td>
+                                                    <td>
+                                                        {% if deplacement.date_depart == aujourd_hui %}
+                                                        <div class="flex align-items-center list-user-action">
+                                                            <a class="zoom-on-hover iq-bg-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modifier le deplacement" href="{% url 'deplacement:modifier_deplacement_cours' pk=deplacement.pk %}"><i class="ri-pencil-line"></i></a>
+                                                        </div>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <div class="flex align-items-center list-user-action">
+                                                            <a class="iq-bg-danger zoom-on-hover" data-toggle="tooltip" data-placement="top" title="" data-original-title="Annuler le deplacement" href="#" onclick="confirmDeleteModale(this)" data-deplacement-id="{{ deplacement.pk }}"><i class="bi bi-x"></i></a>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if deplacement.id in prolongement_encours and deplacement.id not in prolongement_arrive and deplacement.id not in prolongement_accepte %}
+
+                                                            <button type="button" class="btn mb-3 btn-info terminer-btn2 prolongement-btn" data-target="#prolongementModal{{ deplacement.id }}" data-toggle="modal" data-deplacement-id="{{ deplacement.id }}">
+                                                                <i class="ri-shuffle-fill"></i>
+                                                                Prolongement demandé
+                                                            </button>
+                                                        {% elif deplacement.id not in  prolongement_encours and deplacement.id  not in  prolongement_arrive or deplacement.id  not in  prolongement_accepte %}
+                                                            <button type="button" class="btn mb-3 btn-success terminer-btn2" data-toggle="modal" data-target="#exampleModalScrollable" data-deplacement-id="{{ deplacement.id }}" {% if prolongement %}data-prolongement-id="{{ prolongement.id }}"{% endif %}>
+                                                                <i class="ri-flag-2-fill"></i>
+                                                                Terminer
+                                                            </button>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <!-- Pop up pour la demade -->
+                                                <div class="modal fade" id="prolongementModal{{ deplacement.id }}" tabindex="-1" role="dialog" aria-labelledby="prolongementModalTitle{{ deplacement.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-scrollable modal-custom" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="prolongementModalTitle{{ deplacement.id }}">Informations sur le prolongement</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                {% for prolongement in prolongements %}
+                                                                    {% if prolongement.deplacement_id == deplacement.id %}
+                                                                        <p><strong>Motif :</strong> {{ prolongement.motif }}</p>
+                                                                        <p><strong>Durée :</strong> {{ prolongement.duree }} </p>
+                                                                        <p><strong>Photo de la jauge :</strong> <img style="max-width: 200px; height: auto" src="{{ prolongement.photo_jauge_demande.url }}" alt="photo_jauge_demande" class="vehicule-image" onclick="showImagePopup2('{{  prolongement.photo_jauge_demande.url }}')"> </p>
+                                                                        <div id="photo-container" ></div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                        <form action="{% url 'deplacement:accept_prolongement' prolongement.id %}" method="post">
+                                                                            {% csrf_token %}
+                                                                            <button id="accepterButton"  type="submit" class="btn btn-success mr-auto">ACCEPTER ✅</button>
+                                                                        </form>
+                                                                        <button type="button" class="btn btn-secondary refuserButton" data-prolongement-id="{{ prolongement.id }}">REFUSER ❌</button>
+                                                                        <div id="refuserFormContainer_{{ prolongement.id }}" class="hiddenRefuserForm" style="display: none;">
+                                                                            <form id="refuserForm_{{ prolongement.id }}" action="{% url 'deplacement:refuse_prolongement' prolongement.id %}" method="post">
+                                                                                {% csrf_token %}
+                                                                                <div class="form-group">
+                                                                                    <label for="motifRefus_{{ prolongement.id }}">Motif de refus :</label>
+                                                                                    <textarea id="motifRefus_{{ prolongement.id }}" name="motif_refus" class="form-control" rows="3" placeholder="Entrez le motif de refus"></textarea>
+                                                                                </div>
+                                                                                <button type="submit" class="btn text-white" style="background-color: #3ab0c3">ENVOYER ✅</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="10" class="text-center">Aucun déplacement en cours</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row justify-content-between mt-3">
+                                    <div id="user-list-page-info" class="col-md-6">
+                                        <span>Affichage de {{ deplacements.start_index }} à {{ deplacements.end_index }} sur {{ deplacements.paginator.count }} entrées</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination justify-content-end mb-0">
+                                                {% if deplacements.has_previous %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ deplacements.previous_page_number }}">Précédent</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Précédent</span>
+                                                    </li>
+                                                {% endif %}
+
+                                            {% if deplacements.paginator.num_pages > 1 %}
+                                                    <li class="page-item {% if deplacements.number == 1 %}active{% endif %}"><a class="page-link" href="?page=1">1</a></li>
+                                                    {% if deplacements.number > 4 %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    {% for num in  deplacements.paginator.page_range %}
+                                                        {% if num != 1 and num != deplacements.paginator.num_pages %}
+                                                            {% if num == deplacements.number %}
+                                                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                                            {% elif num <= deplacements.number|add:"3" and num >= deplacements.number|add:"-3" %}
+                                                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if deplacements.number < deplacements.paginator.num_pages|add:"-3" %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    <li class="page-item {% if deplacements.number == deplacements.paginator.num_pages %}active{% endif %}"><a class="page-link" href="?page={{ deplacements.paginator.num_pages }}">{{ deplacements.paginator.num_pages }}</a></li>
+                                                {% endif %}
+
+
+                                                {% if deplacements.has_next %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ deplacements.next_page_number }}">Suivant</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Suivant</span>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel" style="display: flex; justify-content: center; align-items: center;">Confirmation de l'arrivée du conducteur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Etat arrivé</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="iq-card-body">
+                    <form class="form-horizontal" id="DeplacementArriverForm" method="post" enctype="multipart/form-data" action="{% url 'deplacement:enregistrer_etatArriver' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="deplacement_id" name="deplacement_id">
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2 align-self-center mb-0" for="photo_jauge_arrive">Photo de la jauge:</label>
+                            <div class="form-control col-sm-10" style="border-radius: 10px">
+                                <input  required  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="InputJauge" name="photo_jauge_arrive"  value="{% if form.photo_jauge_arrive.value %}{{ form.photo_jauge_arrive.value }}{% endif %}">
+                            </div>
+                            {% if form.photo_jauge_depart.errors %}
+                                <p class="help-block">Veillez joindre une image</p>
+                            {% endif %}
+                        </div>
+                        <div class="form-group row">
+                            <label class="control-label col-sm-2 align-self-center mb-0" for="kilometrage_arrive">Kilometrage:</label>
+                            <div class="col-sm-10">
+                                <input type="number" min="0" class="form-control" id="kilometrage_arrive" name="kilometrage_arrive">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="customFile" class="font-weight-bold">Sélectionner des images :</label>
+                            <div class="form-control h-auto" style="border-radius: 10px">
+                                <input  multiple required placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="customFile" name="images"  value="{% if form.images.value %}{{ form.images.value }}{% endif %}">
+                            </div>
+                            {% if form.image.errors %}
+                                <p class="help-block">Veillez joindre une image</p>
+                            {% endif %}
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" >Enregistrer</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="fermerModal()">Fermer</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {#    Modal pour 6 images maximu#}
+    <div class="modal fade" id="existImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center " style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                        Erreur!!!
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                            <defs><clipPath id="__lottie_element_699">
+                                <rect width="1080" height="1080" x="0" y="0">
+
+                                </rect>
+                            </clipPath>
+                            </defs>
+                            <g clip-path="url(#__lottie_element_699)">
+                                <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1" fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal" font-weight="700" aria-label="!" style="display: block;"><g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1" style="display: inherit;">
+                                    <g>
+                                        <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                            <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                            </path>
+                                            <g opacity="1" transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                                </g>
+
+                                <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)" opacity="1" style="display: block;">
+                                    <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                        <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0" stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28" d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                        </path>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </h1>
+                </div>
+
+                <div class="modal-body text-danger" style="font-size: 30px">
+                    Vous ne pouvez selectionner que 6 Images.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModale" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel" style="display: flex; justify-content: center; align-items: center;">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de votre confirmation ?
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" onclick="executeDelete()">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        $(document).ready(function() {
+            $('.terminer-btn2').on('click', function() {
+                var deplacementId = $(this).data('deplacement-id');
+                $('#deplacement_id').val(deplacementId);
+            });
+        });
+
+        function fermerModal() {
+            $('#exampleModalScrollable').modal('hide');
+        }
+    </script>
+
+    <!-- Scripts pour recuperer les elements de la demande de prolongement-->
+    <script>
+        $(document).ready(function () {
+            $('.prolongement-btn').on('click', function () {
+                var prolongementId = $(this).data('prolongement-id');
+                // Utilisez prolongementId comme nécessaire pour afficher les informations dans le modal
+                // Par exemple, vous pouvez mettre à jour le contenu du modal avec jQuery
+                $('#prolongementModal').modal('show');
+            });
+        });
+    </script>
+    <script>
+        function confirmDeleteModale(linkElement) {
+            var deplacementId = linkElement.getAttribute('data-deplacement-id');
+            $('#confirmDeleteModale').modal('show');
+            $('#confirmDeleteModale').data('deplacement-id', deplacementId);
+        }
+        function executeDelete() {
+            var deplacementId = $('#confirmDeleteModale').data('deplacement-id');
+            window.location.href = "{% url 'deplacement:delete_deplacement_cours' 0 %}".replace(0, deplacementId);
+            $('#confirmDeleteModale').modal('hide');
+        }
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let fileInput = document.getElementById('customFile');
+            fileInput.addEventListener('change', function (event) {
+                let selectedFiles = event.target.files;
+                let maxAllowedFiles = 6;
+                if (selectedFiles.length > maxAllowedFiles) {
+                    $('#existImage').modal('show');
+                    fileInput.value = '';
+                }
+            });
+        });
+    </script>
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var prolongementButtons = document.querySelectorAll('.prolongement-btn');
+
+            prolongementButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var deplacementId = button.getAttribute('data-deplacement-id');
+
+                    // Envoi de la demande AJAX pour récupérer les photos associées à la demande de prolongement
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            if (xhr.status == 200) {
+                                var response = JSON.parse(xhr.responseText);
+                                var photoUrls = response.photos;
+                                // Mettre à jour le contenu du modal avec les photos récupérées
+                                var modalId = button.getAttribute('data-target');
+                                var modal = document.querySelector(modalId);
+                                var photoContainer = modal.querySelector('#photo-container');
+                                photoContainer.innerHTML = ""; // Effacer le contenu précédent
+                                photoUrls.forEach(function(photoUrl) {
+                                    var img = document.createElement('img');
+                                    img.src = photoUrl;
+                                    img.classList.add('modal-photo');
+                                    img.addEventListener('click', function() {
+                                        showImagePopup(photoUrl);
+                                    });
+                                    photoContainer.appendChild(img);
+
+
+
+
+                                });
+                            } else {
+                                console.error("Erreur lors de la récupération des photos associées à la demande de prolongement : " + xhr.status);
+                            }
+                        }
+                    };
+                    xhr.open("GET", "{% url 'deplacement:get_photos_demande_prolongement' %}?id_deplacement=" + deplacementId, true);
+                    xhr.send();
+                });
+            });
+        });
+
+        function showImagePopup2(photo_jauge_demandeUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = photo_jauge_demandeUrl;
+            popupImage.style.maxWidth = '80%';
+            popupImage.style.minWidth = '60%';
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.width = '90%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background="transparent";
+            popupContainer.style.padding = '70px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+        function showImagePopup(imageUrl) {
+            var popupContainer = document.createElement('div');
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+            popupContainer.style.border = '1px solid #ccc';
+            popupContainer.style.padding = '20px';
+            popupContainer.style.zIndex = '9999';
+
+            var img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+
+            // Append image to popup container
+            popupContainer.appendChild(img);
+
+            // Close popup when clicked outside the image
+            popupContainer.addEventListener('click', function(event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+
+            // Append popup container to body
+            document.body.appendChild(popupContainer);
+            popupContainer.addEventListener('click', function(event) {
+                if (event.target === popupContainer || event.target === img) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+
+        }
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.refuserButton').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var prolongementId = this.dataset.prolongementId;
+                    var button = this;
+                    var formContainer = document.getElementById('refuserFormContainer_' + prolongementId);
+
+                    button.style.display = 'none'; // Cacher le bouton "Refuser"
+                    formContainer.style.display = 'block'; // Afficher le formulaire de refus
+                });
+            });
+        });
+    </script>
+
+
+    </body>
+{% endblock %}

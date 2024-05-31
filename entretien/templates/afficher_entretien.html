@@ -1,0 +1,210 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <style>
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out; /* Ajoute une transition douce pour l'effet de zoom */
+        }
+
+        .zoom-on-hover:hover {
+            transform: scale(2); /* Applique le zoom au survol */
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="iq-card">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h2 class="card-title">Liste des entretiens <i class="bi bi-tools"></i></h2>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <div class="table-responsive">
+                                    <div class="row justify-content-between">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div id="user_list_datatable_info" class="dataTables_filter">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="form-group mb-0">
+                                                            <form class="mr-3 position-relative" method="get" action="{% url 'entretien:entretien_search' %}">
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="search" value="{{ request.GET.q }}" name="q" placeholder="Rechercher par type entretien, marque, modèle ou matricule">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Rechercher</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6 ms-0" style="margin-top: 0">
+                                                        {% if no_results %}
+                                                            <p>Aucun résultat trouvé pour la recherche <span class="text-danger">"{{ request.GET.q }}"</span>.</p>
+                                                        {% endif %}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table id="user-list-table" class="table table-striped table-borderless mt-4" role="grid" aria-describedby="user-list-page-info">
+                                        <thead>
+                                        <tr class="table-danger">
+                                            <th>Marque du véhicule</th>
+                                            <th>Modèle du véhicule</th>
+                                            <th>Numéro d'immatriculation du véhicule</th>
+                                            <th>Type d'entretien</th>
+                                            <th>prix de l'entretient</th>
+                                            <th>actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if entretiens %}
+                                            {% for entretien in entretiens %}
+                                                <tr>
+                                                    <td>{{ entretien.vehicule.marque|capfirst}}</td>
+                                                    <td>{{ entretien.vehicule.type_commercial|capfirst }}</td>
+                                                    <td>{{ entretien.vehicule.numero_immatriculation }}</td>
+                                                    <td>{{ entretien.type }}</td>
+                                                    <td>{{ entretien.prix_entretient|capfirst }}</td>
+                                                    <td>
+                                                        <div class="flex align-items-center list-user-action">
+                                                            <a class="zoom-on-hover iq-bg-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modifier" href="{% url 'entretien:modifier_entretien' pk=entretien.pk %}"><i class="ri-pencil-line"></i></a>
+                                                            {#                                               <a class="zoom-on-hover iq-bg-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="Supprimer" data-vehicle-id="{{ vehicule.pk }}" href="#" onclick="confirmDelete(this)"><i class="ri-delete-bin-line"></i></a>#}
+                                                            <a class="zoom-on-hover iq-bg-secondary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Voir" href="{% url 'entretien:details_entretien' entretien_id=entretien.id %}" ><i class="ri-eye-line"></i></a>
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="10" class="text-center">Aucun entretien disponible</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Affichage de la pagination -->
+                                <div class="row justify-content-between mt-3">
+                                    <div id="user-list-page-info" class="col-md-6">
+                                        <span>Affichage de {{ entretiens.start_index }} à {{ entretiens.end_index }} sur {{ entretiens.paginator.count }} entrées</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination justify-content-end mb-0">
+                                                {% if entretiens.has_previous %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ entretiens.previous_page_number }}">Précédent</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Précédent</span>
+                                                    </li>
+                                                {% endif %}
+
+                                                {% if entretiens.paginator.num_pages > 1 %}
+                                                    <li class="page-item {% if entretiens.number == 1 %}active{% endif %}"><a class="page-link" href="?page=1">1</a></li>
+                                                    {% if entretiens.number > 4 %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    {% for num in  entretiens.paginator.page_range %}
+                                                        {% if num != 1 and num != entretiens.paginator.num_pages %}
+                                                            {% if num == entretiens.number %}
+                                                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                                            {% elif num <= entretiens.number|add:"3" and num >= entretiens.number|add:"-3" %}
+                                                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if entretiens.number < entretiens.paginator.num_pages|add:"-3" %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    <li class="page-item {% if entretiens.number == entretiens.paginator.num_pages %}active{% endif %}"><a class="page-link" href="?page={{ entretiens.paginator.num_pages }}">{{ entretiens.paginator.num_pages }}</a></li>
+                                                {% endif %}
+
+                                                {% if entretiens.has_next %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ entretiens.next_page_number }}">Suivant</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Suivant</span>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel" style="display: flex; justify-content: center; align-items: center;">Confirmation de la suppression</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer ce véhicule ?
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" onclick="executeDelete()">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour afficher le modal de confirmation
+        function confirmDelete(linkElement) {
+            var vehicleId = linkElement.getAttribute('data-vehicle-id');
+            // Afficher le modal
+            $('#confirmDeleteModal').modal('show');
+
+            // Enregistrer l'ID du véhicule dans un champ caché du modal
+            $('#confirmDeleteModal').data('vehicle-id', vehicleId);
+        }
+
+        // Fonction pour exécuter la suppression
+        function executeDelete() {
+            // Récupérer l'ID du véhicule depuis le champ caché du modal
+            var vehicleId = $('#confirmDeleteModal').data('vehicle-id');
+
+            // Rediriger vers l'URL de suppression avec l'ID du véhicule
+            window.location.href = "{% url 'vehicule:supprimer_vehicule' 0 %}".replace(0, vehicleId);
+
+            // Fermer le modal
+            $('#confirmDeleteModal').modal('hide');
+        }
+
+    </script>
+    </body>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends 'header.html' %}
+{% block content%}
+    {% load static  %}
+    <body>
+    <style>
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+        .zoom-on-hover:hover {
+            transform: scale(2);
+        }
+        .conducteur-image {
+            max-width: 130px;
+            max-height: 130px;
+            width: auto;
+            height: auto;
+            border-radius: 50%;
+        }
+    </style>
+
+    <div class="wrapper">
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="iq-card">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h2 class="card-title">Liste des conducteurs <i class="ri-user-line"></i></h2>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <div class="table-responsive">
+
+                                    <div class="row justify-content-between">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div id="user_list_datatable_info" class="dataTables_filter">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="form-group mb-0">
+                                                            <form class="mr-3 position-relative" method="get" action="{% url 'conducteur:conducteur_search' %}">
+                                                                <div class="col-sm-10">
+                                                                    <input type="text" class="form-control" id="search" value="{{ request.GET.q }}" name="q" placeholder="Rechercher un conducteur: Nom, Prénoms, Numéro permis">
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Rechercher</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-6 ms-0" style="margin-top: 0">
+                                                        {% if no_results %}
+                                                            <p>Aucun résultat trouvé pour la recherche <span class="text-danger">"{{ request.GET.q }}"</span>.</p>
+                                                        {% endif %}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="table-responsive">
+                                        <table id="user-list-table" class=" table table-striped table-borderless mt-4" role="grid" aria-describedby="user-list-page-info" >
+                                            <thead >
+                                            <tr class="table-danger">
+                                                <th >Image</th>
+                                                <th >Nom Utilisateur</th>
+                                                <th >Nom</th>
+                                                <th >Prénoms</th>
+                                                <th >Numéro</th>
+                                                <th >Adresse</th>
+                                                <th >Date de naissance</th>
+                                                <th >Date d'embauche</th>
+                                                <th >Numéro du permis </th>
+                                                <th >Actions</th>
+                                            </tr>
+
+                                            </thead>
+
+                                            <tbody>
+                                            {% if utilisateurs %}
+                                                {% for utilisateur in utilisateurs %}
+                                                    <tr>
+                                                        <td> {% if utilisateur.conducteur.image  %}
+                                                            <img src="{{ utilisateur.conducteur.image.url}}" alt="profile-img" class="avatar-130 img-fluid conducteur-image"style="width: 80%;height: 80px">
+                                                        {% else  %}
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                                                            </svg>
+                                                        {% endif  %}
+                                                        </td>
+                                                        <td>{{ utilisateur.username }}</td>
+                                                        <td>{{ utilisateur.nom|capfirst }}</td>
+                                                        <td>{{ utilisateur.prenom|title }}</td>
+                                                        <td>{{ utilisateur.conducteur.numero_telephone}}</td>
+                                                        <td>{{ utilisateur.conducteur.adresse|title }}</td>
+                                                        <td>{{ utilisateur.conducteur.date_de_naissance}}</td>
+                                                        <td>{{ utilisateur.conducteur.date_embauche}}</td>
+                                                        <td>{{ utilisateur.conducteur.numero_permis_conduire}}</td>
+                                                        <td>
+
+                                                            <div class="flex align-items-center list-user-action">
+                                                                <a class="zoom-on-hover iq-bg-secondary" data-toggle="tooltip" data-placement="top" data-original-title="Voir" href="{% url 'conducteur:details_conducteur' conducteur_id=utilisateur.conducteur.id %}" ><i class="ri-eye-line"></i></a>
+                                                                <a class="iq-bg-success zoom-on-hover" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modifier les informtaions du conducteur" href="{% url 'conducteur:modifier_conducteur' utilisateur.conducteur.pk %}"><i class="ri-pencil-line"></i></a>
+                                                                <a class="iq-bg-danger zoom-on-hover" data-toggle="tooltip" data-placement="top" title="Supprimer le conducteur" href="#" onclick="confirmDeleteModal(this)" data-conducteur-id="{{ utilisateur.conducteur.pk }}"><i class="ri-delete-bin-line"></i></a>
+
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="10" class="text-center">Aucun conducteurs disponible</td>
+                                                </tr>
+                                            {% endif %}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                {# Modal pour la suppresion #}
+                                <div class="modal fade" id="confirmDeleteModal{{ utilisateurs.conducteur.id }}" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel{{ utilisateurs.conducteur.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="display: flex; justify-content: center; align-items: center;">
+                                                <h5 class="modal-title" id="confirmDeleteModalLabel{{ utilisateurs.conducteur.id }}">Confirmation de la suppression</h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir supprimer ce conducteur ?
+                                            </div>
+                                            <div class="modal-footer" style="display: flex; justify-content: center; align-items: center;">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                                <a href="#" class="btn btn-danger" onclick="executeDelete('{{ utilisateurs.conducteur.id }}')">Supprimer</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Affichage de la pagination -->
+                                <div class="row justify-content-between mt-3">
+                                    <div id="user-list-page-info" class="col-md-6">
+                                        <span>Affichage de {{ utilisateurs.start_index }} à {{ utilisateurs.end_index }} sur {{ utilisateurs.paginator.count }} entrées</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination justify-content-end mb-0">
+                                                {% if utilisateurs.has_previous %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ utilisateurs.previous_page_number }}">Précédent</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Précédent</span>
+                                                    </li>
+                                                {% endif %}
+                                                {% if utilisateurs.paginator.num_pages > 1 %}
+                                                    <li class="page-item {% if utilisateurs.number == 1 %}active{% endif %}"><a class="page-link" href="?page=1">1</a></li>
+                                                    {% if utilisateurs.number > 4 %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    {% for num in  utilisateurs.paginator.page_range %}
+                                                        {% if num != 1 and num != utilisateurs.paginator.num_pages %}
+                                                            {% if num == utilisateurs.number %}
+                                                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                                            {% elif num <= utilisateurs.number|add:"3" and num >= utilisateurs.number|add:"-3" %}
+                                                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if utilisateurs.number < utilisateurs.paginator.num_pages|add:"-3" %}
+                                                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                                                    {% endif %}
+                                                    <li class="page-item {% if utilisateurs.number == utilisateurs.paginator.num_pages %}active{% endif %}"><a class="page-link" href="?page={{ utilisateurs.paginator.num_pages }}">{{ utilisateurs.paginator.num_pages }}</a></li>
+                                                {% endif %}
+
+                                                {% if utilisateurs.has_next %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="?page={{ utilisateurs.next_page_number }}">Suivant</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Suivant</span>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function confirmDeleteModal(linkElement) {
+                var conducteurId = linkElement.getAttribute('data-conducteur-id');
+                $('#confirmDeleteModal').modal('show');
+                $('#confirmDeleteModal').data('conducteur-id', conducteurId);
+            }
+            function executeDelete() {
+                var conducteurId = $('#confirmDeleteModal').data('conducteur-id');
+                window.location.href = "{% url 'conducteur:supprimer_conducteur' 0 %}".replace(0, conducteurId);
+                $('#confirmDeleteModal').modal('hide');
+            }
+        </script>
+    </div>
+    {% include 'footer.html' %}
+    </body>
+{% endblock %}

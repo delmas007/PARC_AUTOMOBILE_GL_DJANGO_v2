@@ -1,0 +1,173 @@
+
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #6546d2;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .content-to-export{
+            margin-top: 0;
+        }
+
+        .bouton_telecharger:hover {
+            transform: scale(1.2);
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+
+    <div class="wrapper">
+        {% include 'slide.html' %}
+        {% include 'top_navbar.html' %}
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-10" style="margin-left: auto; margin-right: auto">
+                        <div id="content-page1" class="content-page1">
+                            <div class="content-to-export" id="content-to-export">
+
+                                <div class="tableau" id="tableau" >
+                                    <table style="left: auto; right: auto; padding: 20px">
+                                        <thead style="height: 100px; text-align: center; font-size: 30px">
+                                        <tr>
+                                            <th colspan="5">Informations du conducteur {{ utilisateur.nom|title }} {{ utilisateur.prenom|title}} {% if conducteur.image%} <img src="{{ conducteur.image.url}}" alt="profile-img" class="avatar-130 img-fluid conducteur-image"> {% endif %}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>NOM :</strong></td>
+                                            <td class="center-text">{{ utilisateur.nom|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>PRÉNOMS :</strong></td>
+                                            <td class="center-text">{{ utilisateur.prenom|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NUMÉRO DE PERMIS DE CONDUIRE :</strong></td>
+                                            <td class="center-text">{{ conducteur.numero_permis_conduire }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NUMÉRO DE TÉLÉPHONE :</strong></td>
+                                            <td class="center-text">{{ conducteur.numero_telephone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NUMÉRO CNI :</strong></td>
+                                            <td class="center-text">{{ conducteur.num_cni }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>EMAIL :</strong></td>
+                                            <td class="center-text">{{ utilisateur.email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DATE DE NAISSANCE :</strong></td>
+                                            <td class="center-text">{{ conducteur.date_de_naissance }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DATE D'EMBAUCHE :</strong></td>
+                                            <td class="center-text">{{ conducteur.date_embauche }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>ADRESSE :</strong></td>
+                                            <td class="text-center">{{ conducteur.adresse|title }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <button style="text-align: center; margin-left: 600px; margin-right: auto; border: 0; margin-top: 10px" class="bouton_telecharger" onclick="ouvrePopup()">
+                                <a class="zoom-on-hover iq-bg-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Exporter les informations du conducteur en pdf">
+                                    <i style="text-align: center; font-size: 50px" class="ri-upload-2-fill"></i>
+                                </a>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="popupDeleteModal" tabindex="-1" role="dialog" aria-labelledby="popupDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="display: flex; justify-content: center; align-items: center;">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Voulez-vous exporter les informations de <span style="color: #4b2db9">{{ utilisateur.nom|title }} {{ utilisateur.prenom|title }}</span> ?</h5>
+                </div>
+                <div class="modal-body">
+                     Les données seront exportées sous un fichier PDF !
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: center; align-items: center;">
+                    <a href="" class="btn btn-success" >Annuler</a>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="generatePDF()"> Exporter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+    <script>
+
+        function generatePDF() {
+            var contentPage = document.getElementById('content-page1');
+            var downloadButton = contentPage.querySelector('.bouton_telecharger');
+            downloadButton.style.display = 'none';
+            var contentCopy = contentPage.cloneNode(true);
+            var downloadButtonCopy = contentCopy.querySelector('.bouton_telecharger');
+            if (downloadButtonCopy) {
+                downloadButtonCopy.parentNode.removeChild(downloadButtonCopy);
+            }
+
+            var options = {
+                filename: '{{ utilisateur.nom|title }}-{{ utilisateur.prenom|title }}.pdf',
+                html2canvas: { scale: 2 },
+                margin: 10,
+                image: { type: 'jpeg', quality: 0.98 },
+                output: { quality: 1.0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf(contentCopy, options).outputPdf();
+            downloadButton.style.display = 'block';
+        }
+    </script>
+    <script>
+        function ouvrePopup() {
+            $('#popupDeleteModal').modal('show');
+        }
+    </script>
+
+    </body>
+{% endblock %}

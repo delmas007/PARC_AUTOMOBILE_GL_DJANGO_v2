@@ -1,0 +1,322 @@
+{% load static %}
+
+
+<div class="iq-top-navbar">
+    <div class="iq-navbar-custom">
+        <div class="iq-sidebar-logo">
+            <div class="top-logo">
+                <a href="{% url 'Accueil' %}" class="logo">
+                    <div class="iq-light-logo">
+                        <img class="img-fluid" alt="" src= {% static "images/logo.gif" %}  >
+                    </div>
+                    <div class="iq-dark-logo">
+                        <img class="img-fluid" alt="" src= {% static "images/logo-dark.gif" %}  >
+                    </div>
+                    <span>vito</span>
+                </a>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light p-0">
+            <div class="navbar-left">
+                <ul id="topbar-data-icon" class="d-flex p-0 topbar-menu-icon">
+                    <li class="nav-item">
+                        <a href="{% url 'Accueil' %}" class="nav-link font-weight-bold search-box-toggle" style="color: #f799a3"><i class="ri-home-4-line"></i></a>
+                    </li>
+                    <li><a href="{% url 'vehicule:liste_vehicules' %}" class="nav-link" style="color: #f799a3"><i class="fa fa-car"></i></a></li>
+                    <li><a href="{% url 'conducteur:tous_les_conducteurs' %}" class="nav-link" style="color: #f799a3"><i class="ri-user-line"></i></a></li>
+                    <li><a href="{% url 'deplacement:liste_deplacement' %}" class="nav-link router-link-exact-active router-link-active" style="color: #f799a3"><i class="fa fa-paper-plane"></i></a></li>
+                    <li><a href="{% url 'incident:liste_incidents_interne' %}" class="nav-link router-link-exact-active router-link-active" style="color: #f799a3"><i class="ri-alert-line" style="font-size: 18px"></i></a></li>
+                    <li><a href="{% url 'entretien:liste_Entretien' %}" class="nav-link router-link-exact-active router-link-active" style="color: #f799a3"><i class="bi bi-tools" style="font-size: 18px"></i></a></li>
+                    <li><a href="{% url 'carburant:Liste_carburant' %}" class="nav-link router-link-exact-active router-link-active" style="color: #f799a3"><i class="bi bi-fuel-pump" style="font-size: 18px"></i></a></li>
+                </ul>
+                <div class="iq-search-bar d-none d-md-block">
+                    <form action="#" class="searchbox">
+                        <input type="text" class="text search-input" placeholder="Taper ici pour une recherche...">
+                        <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                        <div class="searchbox-datalink">
+                            <h6 class="pl-3 pt-3 pb-3">Pages</h6>
+                            <ul class="m-0 pl-3 pr-3 pb-3">
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'Accueil' %}" class="nav-link router-link-exact-active router-link-active pr-2"><i class="ri-home-4-line pr-2"></i>Accueil</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'vehicule:liste_vehicules' %}" class="nav-link router-link-exact-active router-link-active pr-2"><i class="fa fa-car pr-2"></i>Véhicules</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'conducteur:tous_les_conducteurs' %}" class="nav-link"><i class="ri-user-line pr-2"></i>Conducteurs</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'deplacement:liste_deplacement' %}" class="nav-link"><i class="fa fa-paper-plane pr-2"></i>Déplacements</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'incident:liste_incidents_interne' %}" class="nav-link"><i class="ri-alert-line pr-2"></i>Incidents</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'entretien:liste_Entretien' %}" class="nav-link"><i class="bi bi-tools" style=" margin-right: 5px"></i> Entretien</a></li>
+                                <li class="iq-bg-primary-hover rounded"><a href="{% url 'carburant:Liste_carburant' %}" class="nav-link"><i class="bi bi-fuel-pump" style=" margin-right: 5px"></i> Carburant</a></li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% if totals > 0 %}
+                <div id="alerte" class="alerte">
+                    Il y a {{ totals }} notifications.
+                </div>
+            {% endif %}
+
+            <!-- Le reste de votre contenu HTML -->
+
+            <script>
+                // Masquer l'alerte après quelques secondes
+                setTimeout(function(){
+                    document.getElementById('alerte').style.display = 'none';
+                }, 10000); // 5000 millisecondes = 5 secondes
+            </script>
+            <style>
+                .alerte {
+                    background-color: #f44336;
+                    color: white;
+                    padding: 10px;
+                    text-align: center;
+                }
+            </style>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"  aria-label="Toggle navigation">
+                <i class="ri-menu-3-line"></i>
+            </button>
+            <div class="iq-menu-bt align-self-center">
+                <div class="wrapper-menu">
+                    <div class="main-circle"><i class="ri-arrow-left-s-line"></i></div>
+                    <div class="hover-circle"><i class="ri-arrow-right-s-line"></i></div>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto navbar-list">
+
+                    {#        Notifications            #}
+                    <li class="nav-item">
+                        <a href="#" class="search-toggle iq-waves-effect" id="truc">
+                            {% if demandes or incidents or vehicules_et_jours_restants_technique or vehicules_et_jours_restants or vehicules_proches_vidange or inciden %}
+                                <span class="bg-danger dots"></span>
+                                <div id="lottie-beil"></div>
+                            {% else %}
+                                <i class="bi bi-bell"></i>
+                            {% endif %}
+
+                        </a>
+                        <div class="iq-sub-dropdown">
+                            <div class="iq-card shadow-none m-0">
+                                <div class="iq-card-body p-0 " style="max-height: 500px; overflow-y: auto;">
+                                    <div class="bg-primary p-3">
+                                        <h5 class="mb-0 text-white">Toutes les Notifications<small class="badge  badge-light float-right pt-1">{{ totals }}</small></h5>
+                                    </div>
+                                    {% if vehicules_et_jours_restants %}
+                                        {% for vehicule, info  in vehicules_et_jours_restants.items %}
+                                            <a href="{% url 'vehicule:details_vehicule' vehicule_id=vehicule.id %}" class="iq-sub-card">
+                                                <div class="media align-items-center">
+                                                    <!-- Afficher l'image du véhicule s'il en a une -->
+                                                    {% if info.photo %}
+                                                        <div class="">
+                                                            <img src="{{ info.photo.images.url }}" alt="Image du véhicule" width="60" height="60">
+                                                        </div>
+                                                    {% else %}
+                                                        <!-- Afficher une image par défaut si le véhicule n'a pas d'image -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+                                                        </svg>
+                                                    {% endif %}
+                                                    <div class="media-body ml-3">
+                                                        <h6 class="mb-0">{{ vehicule.marque }} - {{ vehicule.numero_immatriculation }}</h6>
+                                                        <!-- Afficher les jours restants avant l'expiration de l'assurance -->
+                                                        {% if info.jours_restants == -1 %}
+                                                            <p class="mb-0">Date d'expiration de l'assurance passée, mettez à jour la nouvelle date  </p>
+                                                        {% elif info.jours_restants == 0 %}
+                                                            <p class="mb-0"> Assurance expire aujourd'hui  </p>
+                                                        {% else %}
+                                                            <p class="mb-0"> Assurance expire dans {{ info.jours_restants }} jours  </p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if vehicules_et_jours_restants_technique %}
+                                        {% for vehicule, info  in vehicules_et_jours_restants_technique.items %}
+                                            <a href="{% url 'vehicule:details_vehicule' vehicule_id=vehicule.id %}" class="iq-sub-card">
+                                                <div class="media align-items-center">
+                                                    <!-- Afficher l'image du véhicule s'il en a une -->
+                                                    {% if info.photo %}
+                                                        <div class="">
+                                                            <img src="{{ info.photo.images.url }}" alt="Image du véhicule" width="60" height="60">
+                                                        </div>
+                                                    {% else %}
+                                                        <!-- Afficher une image par défaut si le véhicule n'a pas d'image -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+                                                        </svg>
+                                                    {% endif %}
+                                                    <div class="media-body ml-3">
+                                                        <h6 class="mb-0">{{ vehicule.marque }} - {{ vehicule.numero_immatriculation }}</h6>
+                                                        <!-- Afficher les jours restants avant l'expiration de l'assurance -->
+                                                        {% if info.jours_restants == -1 %}
+                                                            <p class="mb-0">Date visite technique passé, mettez à jour la nouvelle date  </p>
+                                                        {% elif info.jours_restants == 0 %}
+                                                            <p class="mb-0"> Visite technique aujourd'hui  </p>
+                                                        {% elif info.jours_restants == 1 %}
+                                                            <p class="mb-0"> Visite technique demain  </p>
+                                                        {% else %}
+                                                            <p class="mb-0"> Visite technique dans {{ info.jours_restants }} jours  </p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if vehicules_proches_vidange %}
+                                        {% for vehicule , info in vehicules_proches_vidange.items %}
+                                            <a href="{% url 'vehicule:details_vehicule' vehicule_id=vehicule.id %}" class="iq-sub-card">
+                                                <div class="media align-items-center">
+                                                    <!-- Afficher l'image du véhicule s'il en a une -->
+                                                    {% if info.photo %}
+                                                        <div class="">
+                                                            <img src="{{ info.photo.images.url }}" alt="Image du véhicule" width="60" height="60">
+                                                        </div>
+                                                    {% else %}
+                                                        <!-- Afficher une image par défaut si le véhicule n'a pas d'image -->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+                                                        </svg>
+                                                    {% endif %}
+                                                    <div class="media-body ml-3">
+                                                        <h6 class="mb-0">{{ vehicule.marque }} - {{ vehicule.numero_immatriculation }}</h6>
+                                                            <p class="mb-0"> Votre véhicule a parcouru {{ vehicule.kilometrage }} km et devra subir une vidange dans les prochains {{ vehicule.videnge }} km </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+
+
+                                    {% if demandes %}
+                                        {% for demande in demandes %}
+                                            <a href="{% url 'utilisateur:prolongementt' demande.conducteur %}" class="iq-sub-card">
+                                                <div class="media align-items-center">
+                                                    {% if demande.conducteur.image %}
+                                                        <div class="">
+                                                            <img src="{{ demande.conducteur.image.url }}" alt="Photo du conducteur" width="60" height="60">
+                                                        </div>
+
+                                                    {% else %}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                                                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+                                                        </svg>
+                                                    {% endif %}
+                                                    <div class="media-body ml-3">
+                                                        <h6 class="mb-0 ">{{ demande.conducteur }}</h6>
+                                                        <p class="mb-0"> demande de prolongement  {{ demande.conducteur.nom }}</p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if inciden %}
+                                        {% for incident in inciden %}
+                                            <a href="{% url 'incident:incident_externe_detail' incident.pk  %}" class="iq-sub-card">
+                                                <div class="media align-items-center">
+                                                    {% if incident.conducteur.image %}
+                                                        <div class="">
+                                                            <img src="{{ incident.conducteur.image.url }}" alt="Photo du conducteur" width="60" height="60">
+                                                        </div>
+                                                    {% else %}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+                                                            s<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+                                                        </svg>
+                                                    {% endif %}
+                                                    <div class="media-body ml-3">
+                                                        <h6 class="mb-0 ">{{ incident.conducteur }}</h6>
+                                                        <p class="mb-0">  nouvelle incident  </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            {#        Profile Gestionnaire            #}
+            <ul class="navbar-list">
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center bg-primary rounded">
+                            {% if user.image  %}
+                            <img src="{{ user.image.url}}" class="img-fluid rounded mr-3" alt="user">
+                              {% else  %}
+                                <i class="bi bi-person-circle mr-3" style="font-size: 50px; color: white"></i>
+                             {% endif  %}
+                            <div class="caption">
+                                <h6 class="mb-0 line-height text-white">{{ user.username|title}}</h6>
+                                <span class="font-size-12 text-success"><i class="fa fa-circle"></i> Connecté</span>
+                            </div>
+
+                        </a>
+                        <div class="iq-sub-dropdown iq-user-dropdown">
+                            <div class="iq-card shadow-none m-0">
+                                <div class="iq-card-body p-0 ">
+                                    <div class="bg-primary p-3">
+                                        <h5 class="mb-0 text-white line-height">Salut {{ user.nom|title}} {{ user.prenom|title}}</h5>
+                                        <span class="text-success font-size-12"><i class="fa fa-circle"></i> Connecté</span>
+                                    </div>
+                                    <a href="{% url 'utilisateur:Profil_User' %}" class="iq-sub-card iq-bg-primary-hover">
+                                        <div class="media align-items-center">
+                                            <div class="rounded iq-card-icon iq-bg-primary">
+                                                <i class="ri-file-user-line"></i>
+                                            </div>
+                                            <div class="media-body ml-3">
+                                                 <h6 class="mb-0 ">Mon Profil</h6>
+                                                <p class="mb-0 font-size-12">Afficher les détails du profil personnel.</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="{% url 'utilisateur:ChangerMotDePassee' %}" class="iq-sub-card iq-bg-primary-hover">
+                                        <div class="media align-items-center">
+                                            <div class="rounded iq-card-icon iq-bg-primary">
+                                                <i class="bi bi-lock" style=" margin-right: 5px"></i>
+                                            </div>
+                                            <div class="media-body ml-3">
+                                                <h6 class="mb-0 ">Changer le mot de passe</h6>
+                                                <p class="mb-0 font-size-12">Modifier votre mot de passe.</p>
+
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="d-inline-block w-100 text-center p-3">
+                                        <a class="btn btn-primary dark-btn-primary" href="{% url 'Model:Deconnexion2' %}" role="button">Se déconnecter<i class="ri-login-box-line ml-2"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var lottieContainer = document.getElementById("truc");
+            var bellIcon = document.createElement("i");
+            bellIcon.className = "bi bi-bell";
+            var dotsElement = document.querySelector(".dots");
+
+
+            // Ajout d'un écouteur de clic à l'élément "lottie-beil"
+            lottieContainer.addEventListener("click", function() {
+                // Remplacez le contenu de lottie-beil avec l'icône de la cloche
+                lottieContainer.innerHTML = "";
+                lottieContainer.appendChild(bellIcon);
+            });
+        });
+    </script>
+
+</div>

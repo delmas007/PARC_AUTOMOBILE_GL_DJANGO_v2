@@ -1,0 +1,175 @@
+{% extends 'header_conducteur.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .no-requests p:first-child {
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .no-requests p:last-child {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .notification-icon i {
+            color: #39399b;
+            font-size: 25px;
+        }
+        .notifi-box h2 {
+            font-size: 14px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #999;
+        }
+        .notifi-box h2 span {
+            color: #f00;
+        }
+        .notifi-item img {
+            display: block;
+            width: 50px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .notifi-item .text h4 {
+            color: #777;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .notifi-item .text p {
+            color: #aaa;
+            font-size: 12px;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .refuse-message {
+            color: red;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        .accept-message {
+            color: green;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            background-color: rgba(0, 128, 0, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .refuse-reason {
+            color: #8033d5;
+            font-style: italic;
+        }
+        .motif_demande{
+            color: #50aac5;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0);
+            background-color: rgba(0, 128, 0, 0.1);
+            padding: 3px 7px;
+            border-radius: 5px;
+        }
+        .title {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .info-box {
+            position: relative;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+        .ribbon, .ribbon_refuser {
+            position: absolute;
+            width: 100px;
+            top: -0;
+            right: 0;
+
+            padding: 8px 0;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            transform-origin: 100% 0;
+            transform: rotate(45deg) translateX(50%);
+        }
+
+        .ribbon {
+            background-color: #5cb85c;
+        }
+
+        .ribbon_refuser {
+            background-color: #da1010;
+        }
+        .ribbon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 10px 10px;
+            border-color: transparent transparent #5cb85c transparent;
+            z-index: -1;
+        }
+    </style>
+    <body>
+    {% url 'utilisateur:prolongement_lu_details' as prolongement_lu_details %}
+    <nav class="Entete" style=" justify-content: center; align-items: center;">
+    <div class="col-2">
+        <a href="{% url 'utilisateur:liste_mission' %}">
+            <i class="fas fa-arrow-left" style="color: #4c0ab8; font-size: 50px"></i> </a>
+    </div>
+        <div id="entete-container" class="col-7" style="text-align: center; color: white; font-weight: bold; margin-left: 50px;">
+                <span>DETAILS DE LA DEMANDE</span>
+        </div>
+    </nav>
+    <div class="content " id="content-container">
+        <div class="my-account">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-content" style="margin-top: 50px">
+                            <div class="tab-pane fade show {% if request.path == prolongement_lu_details %}active{% else %} {% endif %} text-center " id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <div class="info-box row">
+                                    <div class="row">
+                                        <h6 class="title">Informations de la demande de prolongement</h6>
+                                    </div>
+                                    <div class="row">
+                                        <ul style="list-style-type: none; padding-left: 0;">
+                                            <li style="color: #555;">
+                                                La demande de prolongement que vous avez effectuée le {{ prolongement_details.date_mise_a_jour }} pour une durée de  {{ prolongement_details.duree }} jours
+                                                qui a pour motif " <span class="motif_demande">{{ prolongement_details.motif }}</span>" a été
+                                                {% if prolongement_details.refuser %}
+                                                    <span class="refuse-message">refusée</span> pour cause de "<span class="refuse-reason">{{ prolongement_details.motif_refus }}</span>"
+                                                {% elif prolongement_details.accepter %}
+                                                    <span class="accept-message">acceptée</span>
+                                                {% endif %}
+                                                . Votre déplacement prendra fin le {{ prolongement_details.deplacement.date_fin }}.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    {% if prolongement_details.accepter %}
+                                    <div class="ribbon">Accepté!</div>
+                                    {% elif prolongement_details.refuser %}
+                                        <div class="ribbon_refuser">Refusé!</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer_conducteur.html' %}
+    </body>
+{% endblock %}

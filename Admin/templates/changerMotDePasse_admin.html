@@ -1,0 +1,201 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide_admin.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar_admin.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-7" style="margin-top: 50px">
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Changer votre mot de passe <i class="ri-lock-fill"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-5 align-self-center mb-0" for="email"> Mot de passe actuel :</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="exampleInputdate"   name="passe">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-5 align-self-center mb-0" for="email"> Nouveau mot de passe :</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="exampleInputdate"   name="new_password1">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-5 align-self-center mb-0" for="email"> Confirmez le nouveau mot de passe :</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="exampleInputdate"   name="new_password2">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Changer</button>
+                                    </div>
+                                    {% if form.errors %}
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <div class="alert alert-dark mt-4" role="alert">
+                                                    <strong>Erreur : {{ field }}</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer_admin.html' %}
+{#    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">#}
+{#        <div class="modal-dialog modal-dialog-centered" role="document">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">Mot de passe changer avec  succes!</h5>#}
+{#                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                        <span aria-hidden="true">&times;</span>#}
+{#                    </button>#}
+{#                </div>#}
+{#                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">#}
+{#                    <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">#}
+{#                </div>#}
+{#                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">#}
+{#                    <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>#}
+{#                    <a type="button" class="zoom-on-hover btn btn-success align-items-center text-white" href="{% url 'entretien:Ajouter_Entretien' %}">Voir la liste des entretients </a>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel" style="display: flex; justify-content: center; align-items: center;"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="{% static 'images/Error.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    $(document).ready(function() {
+                        $('#successModal').modal('show');
+                        $('#successModalLabel').html("Mot de passe changé avec succès!");
+                    });
+                {% elif message.tags == 'error' %}
+                    $(document).ready(function() {
+                        $('#errorModal').modal('show');
+                        $('#errorModalLabel').html("Erreur: " + "{{ message }}");
+                    });
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+
+    <script>
+        // Récupérer la date actuelle
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January est 0 !
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        // Affecterf la date actuelle comme date minimale
+        document.getElementById("exampleInputdate").min = today;
+    </script>
+
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectType = document.getElementById('selectType');
+            $('#selectType').change(function () {
+                var selectedTypeId = $(this).val();
+                var selectedOption = $(this).find('option:selected'); // Déclarer et récupérer l'élément sélectionné
+                var selectedTypeText = selectedOption.text(); // Récupérer le texte de l'option sélectionnée
+                // Vérifie si l'identifiant du type d'entretien est une chaîne non vide
+                if(selectedTypeText=="VIDENGE"){
+
+                    $('#div-videnge').removeAttr('hidden disabled');
+                    $('#div-visite').attr('hidden', true);
+                } else if(selectedTypeText=="VISITE"){
+
+                    $('#div-visite').removeAttr('hidden disabled');
+                    $('#div-videnge').attr('hidden', true);
+                } else {
+                     $('#div-visite').attr('hidden', true);
+                      $('#div-videnge').attr('hidden', true);
+                }
+            });
+        });
+
+
+
+    </script>
+
+    </body>
+{% endblock %}

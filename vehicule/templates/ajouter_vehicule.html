@@ -1,0 +1,687 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+        .zoom-on-hover:hover {
+            transform: scale(1.1);
+        }
+        #marque2 {
+            width: 100%;
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-9">
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Formulaire d'ajout de véhicule <i class="ri-roadster-line"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <form class="form-horizontal" method="post" action="{% url 'vehicule:Ajouter_vehicule' %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+
+                                    <div class="row">
+                                        <div class="col-12 col-md-6 col-lg-6">
+                                            <div class="col-md-12 {% if form.marque.errors %}has-error{% endif %}" style="margin-top: 15px">
+                                                <label for="marque" class="font-weight-bold" >Marque du véhicule :</label>
+                                                {{ form.marque }}
+                                                {% if form.marque.errors %}
+                                                    <p class="help-block">{{ form.marque.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.numero_immatriculation.errors %}has-error{% endif %}">
+                                                <label for="numero_immatriculation" class="font-weight-bold">Numéro d'immatriculation :</label>
+                                                <input type="text" class="form-control" id="numero_immatriculation" placeholder="Exemple : 1046KB01" name="numero_immatriculation"  value="{% if form.numero_immatriculation.value %}{{ form.numero_immatriculation.value }}{% endif %}">
+                                                {% if form.numero_immatriculation.errors %}
+                                                    <p class="help-block">{{ form.numero_immatriculation.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.carte_grise.errors %}has-error{% endif %}">
+                                                <label for="carte_grise" class="font-weight-bold">Numéro de la carte grise :</label>
+                                                <input type="text" class="form-control" id="carte_grise" placeholder="Exemple : CG30151017" name="carte_grise" value="{% if form.carte_grise.value %}{{ form.carte_grise.value }}{% endif %}">
+                                                {% if form.carte_grise.errors %}
+                                                    <p class="help-block">{{ form.carte_grise.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.couleur.errors %}has-error{% endif %}">
+                                                <label for="couleur" class="font-weight-bold">Couleur de la voiture :</label>
+                                                <input type="text" class="form-control" id="couleur" placeholder="Exemple : Noire" name="couleur" value="{% if form.couleur.value %}{{ form.couleur.value }}{% endif %}">
+                                                {% if form.couleur.errors %}
+                                                    <p class="help-block">{{ form.couleur.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_mise_circulation.errors %}has-error{% endif %}">
+                                                <label for="date_mise_circulation" class="font-weight-bold">Date de mise en circulation :</label>
+                                                <input type="date" class="form-control" id="date_mise_circulation" placeholder="date mise circulation" name="date_mise_circulation" value="{% if form.date_mise_circulation.value %}{{ form.date_mise_circulation.value }}{% endif %}">
+                                                {% if form.date_mise_circulation.errors %}
+                                                    <p class="help-block">{{ form.date_mise_circulation.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.numero_chassis.errors %}has-error{% endif %}">
+                                                <label for="numero_chassis" class="font-weight-bold">Numéro du VIN/Chassis :</label>
+                                                <input type="text" class="form-control" id="numero_chassis" placeholder="Exemple : JOUXTA2WLU001763" name="numero_chassis" value="{% if form.numero_chassis.value %}{{ form.numero_chassis.value }}{% endif %}">
+                                                {% if form.numero_chassis.errors %}
+                                                    <p class="help-block">{{ form.numero_chassis.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_expiration_assurance.errors %}has-error{% endif %}">
+                                                <label for="date_expiration_assurance" class="font-weight-bold">Date d'expiration assurance :</label>
+                                                <input type="date" class="form-control" id="date_expiration_assurance" placeholder="Date expiration assurance" name="date_expiration_assurance" value="{% if form.date_expiration_assurance.value %}{{ form.date_expiration_assurance.value }}{% endif %}">
+                                                {% if form.date_expiration_assurance.errors %}
+                                                    <p class="help-block">{{ form.date_expiration_assurance.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.taille_reservoir.errors %}has-error{% endif %}">
+                                                <label for="taille_reservoir" class="font-weight-bold">Taille du reservoir (Litres) :</label>
+                                                <input type="number" min="1" class="form-control" id="taille_reservoir" placeholder="Exemple : 60" name="taille_reservoir"  value="{% if form.taille_reservoir.value %}{{ form.taille_reservoir.value }}{% endif %}">
+                                                {% if form.taille_reservoir.errors %}
+                                                    <p class="help-block">{{ form.taille_reservoir.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_limite_taxe.errors %}has-error{% endif %}">
+                                                <label for="date_limite_taxe" class="font-weight-bold">Date limite des taxes du district :</label>
+                                                <input type="date" class="form-control" id="date_limite_taxe" placeholder="Date" name="date_limite_taxe" value="{% if form.date_limite_taxe.value %}{{ form.date_limite_taxe.value }}{% endif %}">
+                                                {% if form.date_limite_taxe.errors %}
+                                                    <p class="help-block">{{ form.date_limite_taxe.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_limite_certificatVignette.errors %}has-error{% endif %}">
+                                                <label for="date_limite_certificatVignette" class="font-weight-bold">Date limite du certificat provisiore de vignette :</label>
+                                                <input type="date" class="form-control" id="date_limite_certificatVignette" placeholder="Date" name="date_limite_certificatVignette" value="{% if form.date_limite_certificatVignette.value %}{{ form.date_limite_certificatVignette.value }}{% endif %}">
+                                                {% if form.date_limite_certificatVignette.errors %}
+                                                    <p class="help-block">{{ form.date_limite_certificatVignette.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_rapport_identification.errors %}has-error{% endif %}">
+                                                <label for="image_rapport_identification" class="font-weight-bold">Sélectionner l'image du rapport d'identification :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_rapport_identification" name="image_rapport_identification">
+                                                </div>
+                                                {% if form.image_rapport_identification.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_attestation_assurance.errors %}has-error{% endif %}">
+                                                <label for="image_attestation_assurance" class="font-weight-bold">Sélectionner l'image de l'attestation d'assurance :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_attestation_assurance" name="image_attestation_assurance">
+                                                </div>
+                                                {% if form.image_attestation_assurance.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_assurance_carte_brune.errors %}has-error{% endif %}">
+                                                <label for="image_assurance_carte_brune" class="font-weight-bold">Sélectionner l'image de l'assurance carte brune :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_assurance_carte_brune" name="image_assurance_carte_brune">
+                                                </div>
+                                                {% if form.image_assurance_carte_brune.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_recto.errors %}has-error{% endif %}">
+                                                <label for="image_recto" class="font-weight-bold">Sélectionner l'image recto de la carte grise :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_recto" name="image_recto">
+                                                </div>
+                                                {% if form.image_recto.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-6">
+                                            <div class="form-group col-md-12 text-right">
+                                                <button type="button" class="iq-icons-list btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" onclick="ajoutType()" style="margin-right: 5px">
+                                                    <i class="ion-plus-circled"></i>Ajouter un type commercial
+                                                </button>
+                                                <button type="button" class="iq-icons-list btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" onclick="ajoutMarque()">
+                                                    <i class="ion-plus-circled"></i>Ajouter une marque
+                                                </button>
+                                            </div>
+                                            <div class="form-group col-md-12 {% if form.date_visite_technique.errors %}has-error{% endif %}">
+                                                <label for="date_visite_technique" class="font-weight-bold">Date de la prochaine visite technique :</label>
+                                                <input type="date" class="form-control" id="date_visite_technique" placeholder="Date prochaine visite technique" name="date_visite_technique" value="{% if form.date_visite_technique.value %}{{ form.date_visite_technique.value }}{% endif %}">
+                                                {% if form.date_visite_technique.errors %}
+                                                    <p class="help-block">{{ form.date_visite_technique.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.carrosserie.errors %}has-error{% endif %}">
+                                                <label for="carrosserie" class="font-weight-bold">Carrosserie :</label>
+                                                <input type="text" class="form-control" id="carrosserie" placeholder="Exemple : Cond int 4 Pts" name="carrosserie" value="{% if form.carrosserie.value %}{{ form.carrosserie.value }}{% endif %}">
+                                                {% if form.carrosserie.errors %}
+                                                    <p class="help-block">{{ form.carrosserie.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.place_assises.errors %}has-error{% endif %}">
+                                                <label for="place_assises" class="font-weight-bold">Place assises :</label>
+                                                <input type="number" class="form-control" id="place_assises" placeholder="Exemple : 5" name="place_assises" value="{% if form.carte_grise.value %}{{ form.place_assises.value }}{% endif %}">
+                                                {% if form.place_assises.errors %}
+                                                    <p class="help-block">{{ form.place_assises.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.kilometrage.errors %}has-error{% endif %}">
+                                                <label for="kilometrage" class="font-weight-bold">Kilométrage (Km/H) :</label>
+                                                <input type="number" class="form-control" id="kilometrage" placeholder="Exemple : 5000" name="kilometrage" value="{% if form.kilometrage.value %}{{ form.kilometrage.value }}{% endif %}">
+                                                {% if form.kilometrage.errors %}
+                                                    <p class="help-block">{{ form.kilometrage.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.type_commercial.errors %}has-error{% endif %}">
+                                                <label for="type_commercial" class="col-form-label">Type commercial :</label>
+                                                {{ form.type_commercial }}
+                                                {% if form.type_commercial.errors %}
+                                                    <p class="help-block">{{ form.type_commercial.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.energie.errors %}has-error{% endif %}">
+                                                <label for="energie" class="font-weight-bold">Énergie :</label>
+                                                {{ form.energie }}
+                                                {% if form.energie.errors %}
+                                                    <p class="help-block">{{ form.energie.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.videnge.errors %}has-error{% endif %}">
+                                                <label for="videnge" class="font-weight-bold">Kilométrage avant vidange (Km/H) :</label>
+                                                <input type="number" class="form-control" id="videnge" placeholder="Exemple : 5000" name="videnge" value="{% if form.videnge.value %}{{ form.videnge.value }}{% endif %}">
+                                                {% if form.videnge.errors %}
+                                                    <p class="help-block">{{ form.videnge.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_limite_recepisse.errors %}has-error{% endif %}">
+                                                <label for="date_limite_recepisse" class="font-weight-bold">Date limite du recepisse :</label>
+                                                <input type="date" class="form-control" id="date_limite_recepisse" placeholder="Date " name="date_limite_recepisse" value="{% if form.date_limite_recepisse.value %}{{ form.date_limite_recepisse.value }}{% endif %}">
+                                                {% if form.date_limite_recepisse.errors %}
+                                                    <p class="help-block">{{ form.date_limite_recepisse.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.date_limite_assurance_carteBrune.errors %}has-error{% endif %}">
+                                                <label for="date_limite_assurance_carteBrune" class="font-weight-bold">Date limite de l'assurance carte brune :</label>
+                                                <input type="date" class="form-control" id="date_limite_assurance_carteBrune" placeholder="Date prochaine visite technique" name="date_limite_assurance_carteBrune" value="{% if form.date_limite_assurance_carteBrune.value %}{{ form.date_limite_assurance_carteBrune.value }}{% endif %}">
+                                                {% if form.date_limite_assurance_carteBrune.errors %}
+                                                    <p class="help-block">{{ form.date_limite_assurance_carteBrune.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_verso.errors %}has-error{% endif %}">
+                                                <label for="image_verso" class="font-weight-bold">Sélectionner l'image verso de la carte grise :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_verso" name="image_verso">
+                                                </div>
+                                                {% if form.image_verso.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_taxe.errors %}has-error{% endif %}">
+                                                <label for="image_taxe" class="font-weight-bold">Sélectionner l'image des taxes du district :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_taxe" name="image_taxe">
+                                                </div>
+                                                {% if form.image_taxe.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.image_recepisse.errors %}has-error{% endif %}">
+                                                <label for="image_recepisse" class="font-weight-bold">Sélectionner l'image du recepisse d'immaticulation :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input  placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="image_recepisse" name="image_recepisse">
+                                                </div>
+                                                {% if form.image_recepisse.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="form-group col-md-12 {% if form.images.errors %}has-error{% endif %}">
+                                                <label for="customFile" class="font-weight-bold">Sélectionner les images du véhicule :</label>
+                                                <div class="form-control h-auto" style="border-radius: 10px">
+                                                    <input multiple required placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="customFile" name="images">
+                                                </div>
+                                                <small class="form-text text-muted">Vous ne pouvez sélectionner que 6 images maximum.</small>
+                                                {% if form.images.errors %}
+                                                    <p class="help-block">Veuillez joindre une image</p>
+                                                {% endif %}
+                                                {% if form.images.errors %}
+                                                    <p class="help-block">{{ form.images.errors.0 }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Ajouter</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    {# Modal pour enregistrement reussi #}
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">Véhicule ajouter avec succès!!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="zoom-on-hover btn btn-danger align-items-center" data-dismiss="modal" onclick="fermerModal()">Fermer</button>
+                    <a type="button" class="zoom-on-hover btn btn-success align-items-center text-white" href="{% url 'vehicule:liste_vehicules' %}">Voir tous les véhicules</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal pour erreur dans le formulaire  #}
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header h4 text-center" style="text-align: center">
+                    Erreur lors de l'ajout du véhicule!!!
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <div id="formErrors" class="text-danger h5">
+                        <div class="text-center"> <img src="{% static 'images/error.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;text-align: center"><br></div>
+                    </div>
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="zoom-on-hover btn btn-danger align-items-center" data-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal pour ajouter marque #}
+    <div class="modal fade" id="ajoutMarque" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter une marque</h1>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="marqueForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="marque" name="marque" required placeholder="Entrer le nom de la marque ">
+                            <div id="marque-error" class="text-danger"></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="fermerModal()">Annuler</button>
+                            <button type="button" class="btn btn-primary" onclick="ajouterMarque()">Ajouter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal pour ajouter un type commercial #}
+    <div class="modal fade" id="ajouterType" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="exampleModalLabel1">Ajouter un type commercial</h2>
+                </div>
+
+                <div class="modal-body">
+                    <form method="post" id="typeForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <select class="form-control" id="marque2" name="marque" required style="width: 100%;">
+                                <option value="">Sélectionner une marque</option>
+                                {% for marque in marques %}
+                                    <option value="{{ marque.id }}">{{ marque.marque }} </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="typecommercial" name="modele" required placeholder="Entrer le nom du type commercial">
+
+                            <div id="type-error" class="text-danger"></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="fermerModal1()">Annuler</button>
+                            <button type="button" class="btn btn-primary" onclick="ajouterType()">Ajouter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    Modal pour 6 images maximu#}
+    <div class="modal fade" id="existImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center " style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                        Erreur!!!
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                            <defs><clipPath id="__lottie_element_699">
+                                <rect width="1080" height="1080" x="0" y="0">
+
+                                </rect>
+                            </clipPath>
+                            </defs>
+                            <g clip-path="url(#__lottie_element_699)">
+                                <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1" fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal" font-weight="700" aria-label="!" style="display: block;"><g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1" style="display: inherit;">
+                                    <g>
+                                        <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                            <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                            </path>
+                                            <g opacity="1" transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                                </g>
+
+                                <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)" opacity="1" style="display: block;">
+                                    <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                        <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0" stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28" d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                        </path>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </h1>
+                </div>
+
+                <div class="modal-body text-danger" style="font-size: 30px">
+                    Vous ne pouvez selectionner que 6 Images.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal pour marque existante   #}
+    <div class="modal fade" id="errorMarque" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-danger" style="font-size: 20px">
+                    Cette marque existe déjà.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal pour type commercial existant   #}
+    <div class="modal fade" id="errorType" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-danger" style="font-size: 20px">
+                    {{ form.errors }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {# Enregistrement reussi ou erreur #}
+    <script>
+        {% if messages%}
+            {% for messages in messages %}
+                $(document).ready(function() {
+                    $('#successModal').modal('show');
+                });
+            {% endfor %}
+        {% endif %}
+        {% if form.errors %}
+            $(document).ready(function() {
+                $('#errorModal').modal('show');
+            });
+        {% endif %}
+    </script>
+
+    <script>
+        function ajoutMarque() {
+            $('#ajoutMarque').modal('show');
+        }
+        function fermerModal() {
+
+            // Fermer le modal
+            $('#ajoutMarque').modal('hide');
+        }
+        {% if form.errors %}
+            function existModal() {
+                $('#existModal').modal('show');
+            }
+        {% endif %}
+    </script>
+
+    <script>
+        function ajoutType() {
+            $('#ajouterType').modal('show');
+        }
+        function fermerModal1() {
+
+            // Fermer le modal
+            $('#ajouterType').modal('hide');
+        }
+        {% if form.errors %}
+            function existModal() {
+                $('#existModal').modal('show');
+            }
+        {% endif %}
+    </script>
+
+    {#    Ajouter une marque de véhicule #}
+    <script>
+        function ajouterMarque() {
+            $.ajax({
+                type: 'POST',
+                url: '{% url "vehicule:ajouter_marque" %}',
+                data: $('#marqueForm').serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#ajoutMarque').modal('hide');
+                        location.reload();
+                    } else if (response.error) {
+                        $('#existModal').modal('show');
+                    } else if (response.errors) {
+                        for (let field in response.errors) {
+                            $('#' + field + '-error').text(response.errors[field]);
+                        }
+                    }
+                },
+                error: function(response) {
+                    let errorMessage = JSON.parse(response.responseText).error;
+                    $('#errorMarque .modal-body').text(errorMessage);
+                    $('#errorMarque').modal('show');
+                }
+            });
+        }
+    </script>
+
+    {#    Ajouter un type commercial #}
+    <script>
+        function ajouterType() {
+            // Récupérez l'ID de la marque sélectionnée
+            let marqueId = $('#marque2').val();
+            if (!marqueId) {
+                let errorMessage = "Veuillez sélectionner une marque.";
+                $('#errorType .modal-body').text(errorMessage);
+                $('#errorType').modal('show');
+                return errorMessage;
+            }
+
+            // Créez un objet FormData pour inclure le jeton CSRF
+            let formData = new FormData($('#typeForm')[0]);
+
+            // Ajoutez l'ID de la marque aux données FormData
+            formData.append('marque_id', marqueId);
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "vehicule:ajouter_type" %}',
+                data: formData,  // Utilisez les données FormData
+                processData: false,  // N'encodez pas les données (le formulaire)
+                contentType: false,  // Utilisez le type de contenu par défaut pour FormData
+                success: function(response) {
+                    if (response.success) {
+                        $('#ajoutType').modal('hide');
+                        location.reload();
+                    } else if (response.error) {
+                        $('#existModal').modal('show');
+                    } else if (response.errors) {
+                        for (let field in response.errors) {
+                            $('#' + field + '-error').text(response.errors[field]);
+                        }
+                    }
+                },
+                error: function(response) {
+                    let errorMessage = JSON.parse(response.responseText).error;
+                    $('#errorType .modal-body').text(errorMessage);
+                    $('#errorType').modal('show');
+                }
+            });
+        }
+
+
+
+    </script>
+
+    {#  Nombre d'image maximum :6   #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let fileInput = document.getElementById('customFile');
+            fileInput.addEventListener('change', function (event) {
+            let selectedFiles = event.target.files;
+            let maxAllowedFiles = 6;
+            if (selectedFiles.length > maxAllowedFiles) {
+                $('#existImage').modal('show');
+                fileInput.value = '';
+            }
+            });
+        });
+    </script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#selectMarque').change(function() {
+                var selectedMarqueId = $(this).val();
+                // Vérifie si l'identifiant de la marque est une chaîne non vide
+                if (selectedMarqueId !== '') {
+                    // Convertit l'identifiant de la marque en un entier
+                    selectedMarqueId = parseInt(selectedMarqueId);
+                    // Vérifie si la conversion a réussi et que l'identifiant est un nombre valide
+                    if (!isNaN(selectedMarqueId)) {
+                        $.ajax({
+                            url: '{% url "vehicule:get_modeles" %}', // URL de la vue Django qui renverra les modèles filtrés
+                            method: 'GET',
+                            data: {
+                                marque_id: selectedMarqueId
+                            },
+                            success: function(response) {
+                                var modeles = JSON.parse(response.modeles);
+                                $('#selectModel').empty(); // Efface les options actuelles
+                                $.each(modeles, function(index, modele) {
+                                    $('#selectModel').append('<option value="' + modele.pk + '">' + modele.fields.modele + '</option>');
+                                });
+                            },
+                            error: function(xhr, errmsg, err) {
+                                console.log(errmsg);
+                            }
+                        });
+                    } else {
+                        console.log("L'identifiant de la marque n'est pas un nombre valide.");
+                    }
+                }
+            });
+        });
+
+    </script>
+
+    {# Bloquer le calendrier  #}
+    <script>
+        // Bloquer le calendrier à la date du jour
+        let today = new Date();
+        let date = String(today.getDate()).padStart(2, '0');
+        let month = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let year = today.getFullYear();
+
+        today = year + '-' + month + '-' + date;
+
+        // Mettre le minimum de l'input des dates
+        document.getElementById("date_expiration_assurance").min = today;
+        document.getElementById("date_visite_technique").min = today;
+    </script>
+
+    {# Barre de recherche dans select   #}
+    <script>
+        $(document).ready(function() {
+            $('#selectMarque').select2({
+                  width: '100%', // Définit la largeur à 100% pour s'adapter à la largeur parente
+                  dropdownAutoWidth: true, // Ajuste automatiquement la largeur du menu déroulant
+              })
+            $('#selectModel').select2({
+                  width: '100%', // Définit la largeur à 100% pour s'adapter à la largeur parente
+                  dropdownAutoWidth: true, // Ajuste automatiquement la largeur du menu déroulant
+              })
+            $('#marque2').select2();
+        });
+    </script>
+
+    </body>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-8" style="margin-top: 50px">
+
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Enregistrer les coûts liés au carburant <i class="bi bi-fuel-pump"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+                          <div class="iq-card-body h-100">
+                                <form class="form-horizontal" method="post" action="{% url 'carburant:Ajouter_carburant' %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="email">Véhicule :</label>
+                                        <div class="col-sm-9">
+                                           {{ form.vehicule }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="email">Type de carburant :</label>
+                                        <div class="col-sm-9 mt-3">
+                                          <input type="text" class="form-control" id="InputTypeCarburant" name="Type_de_carburant" readonly>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="email">Quantité ( Litre ) :</label>
+                                        <div class="col-sm-9">
+                                             {{ form.quantite }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Enregistrer</button>
+                                    </div>
+                                    {% if form.errors %}
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <div class="alert alert-dark mt-4" role="alert">
+                                                    <strong>Erreur : {{ field }}</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">Carburant ajouter avec succès !</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                    <a type="button" class="zoom-on-hover btn btn-success align-items-center text-white" href="{% url 'carburant:Liste_carburant' %}">Voir la liste des coûts liés au carburant </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        {% if messages %}
+            {% for messages in messages %}
+                $(document).ready(function() {
+                    $('#successModal').modal('show');
+                });
+            {% endfor %}
+        {% endif %}
+        {% if form.errors %}
+            $(document).ready(function() {
+                $('#errorModal').modal('show');
+            });
+        {% endif %}
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#selectVehicule').select2({
+                  width: '100%', // Définit la largeur à 100% pour s'adapter à la largeur parente
+                  dropdownAutoWidth: true, // Ajuste automatiquement la largeur du menu déroulant
+              })
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#selectType').select2({
+                  width: '100%', // Définit la largeur à 100% pour s'adapter à la largeur parente
+                  dropdownAutoWidth: true, // Ajuste automatiquement la largeur du menu déroulant
+              })
+        });
+    </script>
+    <script>
+        // Récupérer la date actuelle
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January est 0 !
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        // Affecterf la date actuelle comme date minimale
+        document.getElementById("exampleInputdate").min = today;
+    </script>
+
+    <script>
+        // Détecter le changement dans le champ de sélection de véhicules
+        $('#selectVehicule').change(function() {
+            var vehiculeId = $(this).val(); // Récupérer l'ID du véhicule sélectionné
+            $.ajax({
+                url: '{% url "carburant:get_TypeCarburant" %}', // URL de la vue pour obtenir le kilométrage actuel
+                type: 'GET',
+                data: {
+                    vehicule_id: vehiculeId
+                },
+                success: function(response) {
+                    // Mettre à jour le champ de formulaire du kilométrage avec la valeur reçue
+                    $('#InputTypeCarburant').val(response.Type_de_carburant);
+
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(errmsg);
+                }
+            });
+        });
+    </script>
+
+
+
+    </body>
+{% endblock %}

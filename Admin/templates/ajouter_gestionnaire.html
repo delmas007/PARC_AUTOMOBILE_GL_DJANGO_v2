@@ -1,0 +1,116 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+   <body>
+      <div id="loading">
+         <div id="loading-center">
+         </div>
+      </div>
+      <div class="wrapper">
+          {% include 'slide_admin.html' %}
+          {% include 'top_navbar_admin.html' %}
+   <div id="content-page" class="content-page">
+      <div class="container-fluid">
+         <div class="row d-flex justify-content-center">
+            <div class="col-lg-9">
+                  <div class="iq-card">
+                     <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                           <h4 class="card-title">Ajout d'un nouveau gestionnaire</h4>
+                            <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">gestionnaire ajouter avec succes!</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                                            <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                                        </div>
+                                        <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                                            <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="iq-card-body">
+                        <div class="new-user-info">
+                           <form method="post" enctype="multipart/form-data">
+                               {% csrf_token %}
+                               <div class="row ">
+                                   <div class="form-group col-md-6 {% if form.username.errors %}has-error{% endif %}" >
+                                       <label for="username">Nom d'utilisateur</label>
+                                       <input type="text" class="form-control" id="username" name="username" placeholder="Entrer votre nom d'utilisateur"  value="{% if form.username.value %}{{ form.username.value }}{% endif %}">
+                                       {% if form.username.errors %}
+                                           <p class="help-block">{{ form.username.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+                                   <div class="form-group col-md-6 {% if form.nom.errors %}has-error{% endif %}" >
+                                       <label for="nom">Nom</label>
+                                       <input type="text" class="form-control" id="nom" placeholder="Entrer votre nom" name="nom"  value="{% if form.nom.value %}{{ form.nom.value }}{% endif %}">
+                                       {% if form.nom.errors %}
+                                           <p class="help-block">{{ form.nom.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+                                   <div class="form-group col-md-6 {% if form.prenom.errors %}has-error{% endif %}">
+                                       <label for="prenom">Prenom</label>
+                                       <input type="text" class="form-control" id="prenom" name="prenom" placeholder="Entrer votre prenom" value="{% if form.prenom.value %}{{ form.prenom.value }}{% endif %}">
+                                       {% if form.prenom.errors %}
+                                           <p class="help-block">{{ form.prenom.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+                                   <div class="form-group col-md-6 {% if form.email.errors %}has-error{% endif %}">
+                                       <label for="email">Email:</label>
+                                       <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+                                       {% if form.email.errors %}
+                                           <p class="help-block">{{ form.email.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+                                   <div class="form-group col-md-6 {% if form.password1.errors %}has-error{% endif %}">
+                                       <label for="password1">Mot de passe:</label>
+                                       <input type="password" class="form-control" id="password1" name="password1" placeholder="Mot de passe" value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}">
+                                       {% if form.password1.errors %}
+                                           <p class="help-block">{{ form.password1.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+                                   <div class="form-group col-md-6 {% if form.password2.errors %}has-error{% endif %}">
+                                       <label for="password2">Confirme mot de passe:</label>
+                                       <input type="password" class="form-control" id="password2" name="password2" placeholder="Mot de passe" value="{% if form.password2.value %}{{ form.password2.value }}{% endif %}">
+                                       {% if form.password2.errors %}
+                                           <p class="help-block">{{ form.password2.errors.0 }}</p>
+                                       {% endif %}
+                                   </div>
+
+                                <div class="form-group col-md-12 {% if form.image.errors %}has-error{% endif %}">
+                                       <label for="image">Photo du gestionnaire ( facultatif ) :</label>
+                                       <div class="form-control" style="border-radius: 10px; padding-bottom: 35px">
+                                           <input placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="customFile" name="image"  value="{% if form.image.value %}{{ form.image.value }}{% endif %}">
+                                       </div>
+                                       {% if  form.image.errors %}
+                                           <p class="help-block">Veuillez joindre une image</p>
+                                       {% endif %}
+                                   </div>
+
+                               </div>
+                               <button type="submit" class="btn btn-primary" style="width: 100%">Ajouter</button>
+                           </form>
+                        </div>
+                     </div>
+                  </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   </div>
+      {% include 'footer.html' %}
+      <script>
+          {% for messages  in messages %}
+                      $('#successModal').modal('show');
+          {% endfor %}
+      </script>
+   </body>
+{% endblock %}

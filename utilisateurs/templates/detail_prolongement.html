@@ -1,0 +1,330 @@
+{% extends 'header_conducteur.html' %}
+{% load static %}
+{% block content %}
+    <body>
+    <style>
+        .title {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .dropzone-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--gray);
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dropzone-actions button {
+            flex-grow: 1;
+            min-height: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .dropzone-actions button:hover {
+            text-decoration: underline;
+        }
+
+        .dropzone-actions button[type='reset'] {
+            background-color: transparent;
+            border: 1px solid var(--gray);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        #submit-button {
+            background-color: red;
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: var(--white);
+            cursor: pointer;
+        }
+        #return-button {
+            background-color: white;
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: black;
+            cursor: pointer;
+        }
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        button {
+            font-size: 18px;
+            font-weight: 400;
+            color: #fff;
+            padding: 14px 22px;
+            border: none;
+            background: #0c3b30;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #265df2;
+        }
+        .modal-box {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        .overlay {
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+        }
+        section.active .overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 380px;
+            width: 100%;
+            padding: 30px 20px;
+            border-radius: 24px;
+            background-color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        section.active .modal-box {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .modal-box i {
+            font-size: 70px;
+            color: #4070f4;
+        }
+        .modal-box h2 {
+            margin-top: 20px;
+            font-size: 25px;
+            font-weight: 500;
+            color: #333;
+        }
+        .modal-box h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+            text-align: center;
+        }
+        .modal-box .buttons {
+            margin-top: 25px;
+        }
+        .modal-box button {
+            font-size: 14px;
+            padding: 6px 12px;
+            margin: 0 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+            resize: none; /* Empêche le redimensionnement */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            border-radius: 10px;
+            max-height: 70px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4c0ab8;
+        }
+        .blurred {
+            filter: blur(4px);
+        }
+
+
+    </style>
+    <nav class="Entete" style=" justify-content: center; align-items: center;">
+        <div class="col-2">
+            <a href="{% url 'utilisateur:liste_mission' %}">
+                <i class="fas fa-arrow-left" style="color: #4c0ab8; font-size: 50px"></i> </a>
+        </div>
+        <div id="entete-container" class="col-7" style="text-align: center; color: white; font-weight: bold; margin-left: 50px;">
+            <span>DETAILS DEPLACEMENT</span>
+        </div>
+    </nav>
+
+
+    <div class="content " id="content-container">
+        <div class="my-account">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-content" style="margin-top: 50px">
+                            <div class="tab-pane fade show active text-center " id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <div class="title row" style="text-align: center">
+                                   Informations du deplacement
+                                </div>
+                                <div class="infodeplacement">
+                                    <div class="row">
+                                        <div class="col-5" style="text-align: left">
+                                            <b>Véhicule :</b>
+                                        </div>
+                                        <div class="col">
+                                            {{ deplacement_details.vehicule }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5"  style="text-align: left">
+                                            <b>Conducteur :</b>
+                                        </div>
+                                        <div class="col">
+                                            {{ deplacement_details.conducteur }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5"  style="text-align: left">
+                                            <b>Date de départ :</b>
+                                        </div>
+                                        <div class="col">
+                                            {{ deplacement_details.date_depart }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5"  style="text-align: left">
+                                            <b>Kilométrage au départ :</b>
+                                        </div>
+                                        <div class="col">
+                                            {{ deplacement_details.kilometrage_depart }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5"  style="text-align: left">
+                                            <b>Durée du déplacement :</b>
+                                        </div>
+                                        <div class="col">
+                                            {{ deplacement_details.duree_deplacement }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-5"  style="text-align: left">
+                                            <b>Photo de la jauge :</b>
+                                        </div>
+                                        <div class="col">
+                                            <img src="{{ deplacement_details.photo_jauge_depart.url }}" alt="Photo de la jauge" class="img-fluid" width="100" style="font-size: 10px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="events">
+                                    {% if image_deplacement %}
+                                        {% for image in image_deplacement %}
+                                            <a  class="event">
+                                                <div class="event__image">
+                                                    <img src="{{ image.images.url }}" alt="The Weeknd" style="width: 100%; height: 100%">
+                                                </div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="dropzone-actions">
+                                  <button id="return-button" type="button" onclick="window.location.href='{% url 'utilisateur:liste_mission' %}'">
+                                      Retour
+                                  </button>
+{#                                    {% if deplacement_details.date_depart == aujourdhui and deplacement_details.id not in deplacement_motif %}#}
+{#                                    <button class="show-modal" id="submit-button" type="submit">#}
+{#                                        Signaler un problème#}
+{#                                    </button>#}
+{#                                    {% endif %}#}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section id="deplacement_detail" data-deplacement-id="{{ deplacement_details.id }}">
+        <span class="overlay"></span>
+        <div class="modal-box">
+            <form action="{% url 'utilisateur:ajouter_motif' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="deplacement_id" value="{{ deplacement_details.id }}">
+                <textarea id="message-input"  placeholder="Veillez entrer le motif de votre annulation" name="descritption_modtif" cols="30" rows="10" ></textarea>
+                <div class="buttons" style="align-items: center;">
+                    <button type="submit" style="margin-left: 0; margin-right: 0; width: 100%">Envoyer ✅ </button>
+                </div>
+            </form>
+        </div>
+    </section>
+{#        <script>#}
+{#            const section = document.querySelector("section"),#}
+{#                overlay = document.querySelector(".overlay"),#}
+{#                modalBox = document.querySelector(".modal-box"),#}
+{#                contentContainer = document.getElementById('content-container'),#}
+{#                showBtn = document.querySelector(".show-modal"),#}
+{#                closeBtn = document.querySelector(".close-btn");#}
+{##}
+{#            showBtn.addEventListener("click", () => {#}
+{#                section.classList.add("active");#}
+{#                contentContainer.classList.add('blurred');#}
+{#            });#}
+{##}
+{#            overlay.addEventListener("click", () => {#}
+{#                section.classList.remove("active");#}
+{#                contentContainer.classList.remove('blurred');#}
+{#            });#}
+{##}
+{#            closeBtn.addEventListener("click", () => {#}
+{#                section.classList.remove("active");#}
+{#                contentContainer.classList.remove('blurred');#}
+{#            });#}
+{##}
+{##}
+{#        </script>#}
+{#    <script>#}
+{#        $(document).ready(function() {#}
+{#            $('#message-form').on('submit', function(event) {#}
+{#                event.preventDefault();#}
+{#                var destinataireId = $('#deplacement_detail').data('deplacement-id');#}
+{#                var formData = $(this).serialize();#}
+{#                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();#}
+{#                formData += '&deplacement_id=' + destinataireId;#}
+{#                alert("fff")#}
+{#                $.ajax({#}
+{#                    type: 'POST',#}
+{#                    url: '{% url 'utilisateur:ajouter_motif' %}',#}
+{#                    headers: {'X-CSRFToken': csrfToken},#}
+{#                    data: formData,#}
+{#                    success: function(response) {#}
+{##}
+{#                        $('#message-input').val('');#}
+{#                    },#}
+{#                    error: function(xhr, status, error) {#}
+{#                        console.error(error);#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        });#}
+{#    </script>#}
+        {% include 'footer_conducteur.html' %}
+    </body>
+{% endblock %}

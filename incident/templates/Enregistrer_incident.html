@@ -1,0 +1,176 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+   <body>
+      <!-- loader Start -->
+      <div id="loading">
+         <div id="loading-center">
+         </div>
+      </div>
+      <!-- loader END -->
+      <!-- Wrapper Start -->
+      <div class="wrapper">
+         <!-- Sidebar  -->
+          {% include 'slide.html' %}
+         <!-- TOP Nav Bar -->
+          {% include 'top_navbar.html' %}
+         <!-- TOP Nav Bar END -->
+         <!-- Page Content  -->
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+               <div class="row d-flex justify-content-center">
+                  <div class="col-sm-12 col-lg-7">
+                     <div class="iq-card">
+                         <div class="card-header">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h2 class="card-title"> Enregistrer un incident <i class="ri-alert-line"></i></h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="iq-card-body">
+                           <form class="form-horizontal" method="post" action="{% url 'incident:enregistrer_incident'%}" enctype="multipart/form-data">
+                               {% csrf_token %}
+                               <div class="form-group row">
+                                   <label class="control-label col-sm-4 align-self-center mb-0" for="email" style="font-weight: bold">Selectionner le véhicule concerné :</label>
+                                   <div class="col-sm-10 col-md-6" style="margin-left: 110px">
+                                     {{ form.vehicule }}
+                                   </div>
+                               </div>
+                                <div class="form-group row" style="margin-top: 33px; margin-right: 0">
+                                        <label for="images" class="control-label col-sm-6 col-md-5 align-self-center mb-0" style="font-weight: bold">Sélectionner les images de l'incident :</label>
+                                       <div class="form-control h-auto col-sm-6 col-md-6" style="border-radius: 10px; margin-left: 50px">
+                                           <input placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="customFile" name="images"  value="{% if form.images.value %}{{ form.images.value }}{% endif %}" multiple required>
+                                       </div>
+                                        {% if form.image.errors %}
+                                            <p class="help-block">Veuillez joindre une image</p>
+                                        {% endif %}
+                                </div>
+
+                               <div class="form-group row">
+                                   <label class="control-label col-sm-4 align-self-center mb-0" for="description" style="font-weight: bold">Description de l'incident :</label>
+                                   <textarea rows="4" cols="75" placeholder="Veuillez founir la description de l'incident" class="form-control" name="description_incident" id="description_incident"></textarea>
+
+                               </div>
+
+
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Enregistrer</button>
+
+                               {% if form.errors %}
+                                   {% for field, errors in form.errors.items %}
+                                       {% for error in errors %}
+                                           <div class="alert alert-danger mt-4" role="alert">
+                                               <strong>Erreur : {{ error }}</strong>
+                                           </div>
+                                       {% endfor %}
+                                   {% endfor %}
+                               {% endif %}
+                           </form>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Wrapper END -->
+      <!-- Footer -->
+      {% include 'footer.html' %}
+      <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">Incident enregistrer avec succès !</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                      <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                  </div>
+                  <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                      <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                      <a type="button" class="zoom-on-hover btn btn-success align-items-center text-white" href="{% url 'incident:liste_incidents_interne' %}">Voir tous les incidents </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+   <div class="modal fade" id="existImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+       <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h1 class="modal-title fs-5 text-center " style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                       Erreur!!!
+                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                           <defs><clipPath id="__lottie_element_699">
+                               <rect width="1080" height="1080" x="0" y="0">
+
+                               </rect>
+                           </clipPath>
+                           </defs>
+                           <g clip-path="url(#__lottie_element_699)">
+                               <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1" fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal" font-weight="700" aria-label="!" style="display: block;"><g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1" style="display: inherit;">
+                                   <g>
+                                       <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                           <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                           </path>
+                                           <g opacity="1" transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                           </g>
+                                       </g>
+                                   </g>
+                               </g>
+                               </g>
+                               <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)" opacity="1" style="display: block;">
+                                   <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                       <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0" stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28" d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                       </path>
+                                   </g>
+                               </g>
+                           </g>
+                       </svg>
+                   </h1>
+               </div>
+               <div class="modal-body text-danger" style="font-size: 30px">
+                   Vous ne pouvez selectionner que 6 Images
+               </div>
+           </div>
+       </div>
+   </div>
+      <script>
+          {% if messages %}
+              document.addEventListener('DOMContentLoaded', function() {
+                  var successMessage = "{% for message in messages %}{{ message }}{% endfor %}";
+                  if (successMessage.trim() !== "") {
+                      $('#successModal').modal('show');
+                  }
+              });
+          {% endif %}
+      </script>
+      <script>
+          $(document).ready(function() {
+              $('#selectVehicule').select2({
+                  width: '100%', // Définit la largeur à 100% pour s'adapter à la largeur parente
+                  dropdownAutoWidth: true, // Ajuste automatiquement la largeur du menu déroulant
+              })
+          });
+      </script>
+      <script>
+       document.addEventListener('DOMContentLoaded', function () {
+           var fileInput = document.getElementById('customFile');
+           fileInput.addEventListener('change', function (event) {
+               var selectedFiles = event.target.files;
+               var maxAllowedFiles = 6;
+               if (selectedFiles.length > maxAllowedFiles) {
+                   $('#existImage').modal('show');
+                   fileInput.value = '';
+               }
+           });
+       });
+   </script>
+   </body>
+{% endblock %}

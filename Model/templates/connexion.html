@@ -1,0 +1,94 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+<body>
+  <!-- loader Start -->
+  <div id="loading">
+     <div id="loading-center">
+     </div>
+  </div>
+  <!-- loader END -->
+    <!-- Sign in Start -->
+    <section class="sign-in-page">
+        <div class="container bg-white mt-0 p-0">
+            <div class="row no-gutters">
+                <div class="col-sm-6 align-self-center">
+                    <div class="sign-in-from">
+                        <h1 class="mb-0 dark-signin">Se Connecter <i class="bi bi-person-circle"></i></h1>
+                        <p class="lead" style="font-size: 15px">Entrer votre Nom d'utilisateur et votre mot de passe pour accéder à votre Espace.</p>
+                        <form class="mt-4" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="lead">Nom d'utilisateur :</label>
+                                <input type="text" class="form-control mb-0 w-75" id="exampleInputEmail1" name="username" placeholder="Entrer votre nom d'utilisateur :">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1" class="lead">Mot de passe :</label>
+                                <input type="password" class="form-control mb-0 w-75" id="exampleInputPassword1" name="password" placeholder="Mot de passe :">
+                            </div>
+{#                            <a href="{% url 'utilisateur:password_reset' %}" class="lead" id="forgetPassword" style="font-size: 15px" >Mot de passe oublié ?</a>#}
+                            <div class="text-center w-100 mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 8px 16px;">Connexion</button>
+                            </div>
+                            {% include 'messaging.html' %}
+
+                            {% if form.errors %}
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                       <div class="alert alert-danger mt-4" role="alert">
+                                          <div class="iq-alert-icon">
+                                             <i class="ri-information-line"></i>
+                                          </div>
+                                          <div class="iq-alert-text"><b>{{ error }}</b></div>
+                                       </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-center">
+                    <div class="sign-in-detail text-white">
+                        <a class="sign-in-logo mb-5" style="margin-top: 100px" href="#"><img src="{% static "images/logo-white.png" %}" class="img-fluid" alt="logo"></a>
+                        <div class="slick-slider11">
+                            <div class="item">
+                                <img src="{% static 'images/vehicule.png' %}" class="img-fluid mb-4 rounded" alt="logo">
+                                <h4 class="mb-1 text-white">Parc Auto Manager-Simplifier votre Gestion Automobile!</h4>
+                                <p>Gérer votre parc automobile en toute simplicité avec Parc Auto Manager. Suivi, entretien, et gestion, tout-en-un seul endroit!</p>
+                            </div>
+                            <div class="item">
+                                <img src="{% static 'images/vehicule.png' %}" class="img-fluid mb-4 rounded" alt="logo">
+                                <h4 class="mb-1 text-white">Gérez vos informations en toute simplicité</h4>
+                                <p>Gérez efficacement votre tableau de bord et accédez à toutes les informations importantes en un seul endroit.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="forgetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgetPasswordModalLabel" aria-hidden="true">
+                   <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                         <div class="modal-header">
+                            <h5 class="modal-title" id="forgetPasswordModalLabel">Mot de passe oublié ?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                               <span aria-hidden="true">&times;</span>
+                            </button>
+                         </div>
+                         <div class="modal-body">
+                            <p class="lead text-danger">Veuillez contacter votre administrateur pour obtenir un nouveau mot de passe !</p>
+                         </div>
+                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+      {% include 'footer-inscription.html' %}
+</body>
+{% endblock %}
+

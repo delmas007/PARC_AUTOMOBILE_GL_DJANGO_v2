@@ -1,0 +1,353 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <style>
+        body.sidebar-main-active.right-column-fixed .content-page, body.sidebar-main-active.right-column-fixed{
+            margin-right: 0;
+        }
+        body.sidebar-main-active.right-column-fixed .iq-top-navbar {
+            margin-right: 150px;
+            /* width: calc(100% - 460px); */
+        }
+        body.sidebar-main-active.right-column-fixed .content-page, body.sidebar-main-active.right-column-fixed .iq-footer {
+            margin-left: 80px;
+            margin-right: 0;
+        }
+    </style>
+
+    <body class="sidebar-main-active right-column-fixed header-top-bgcolor">
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide_admin.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar_admin.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <div class="iq-card iq-card-block iq-card-stretch ">
+                            <div class="iq-card-body">
+                                <div class="d-flex d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h2>{% if nombre_vehicules %} {{nombre_vehicules}} {% else %} 0 {% endif %}</h2>
+                                        <p class="fontsize-sm m-0">Nombre de voitures</p>
+                                    </div>
+                                    <div class="rounded-circle iq-card-icon dark-icon-light iq-bg-primary "> <i class="ri-roadster-line"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <div class="iq-card iq-card-block iq-card-stretch ">
+
+                            <div class="iq-card-body">
+                                <div class="d-flex d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h2>{% if nombre_conducteurs %} {{nombre_conducteurs}} {% else %} 0 {% endif %}</h2>
+                                        <p class="fontsize-sm m-0">Nombre de conducteurs</p>
+                                    </div>
+                                    <div class="rounded-circle iq-card-icon iq-bg-secondary"><i class="ri-user-line"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <div class="iq-card iq-card-block iq-card-stretch ">
+                            <div class="iq-card-body">
+                                <div class="d-flex d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h2>{% if nombre_incidents %} {{nombre_incidents}} {% else %} 0 {% endif %}</h2>
+                                        <p class="fontsize-sm m-0">Nombre d'incidents</p>
+                                    </div>
+                                    <div class="rounded-circle iq-card-icon iq-bg-danger"><i class="ri-alert-line"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-3">
+                        <div class="iq-card iq-card-block iq-card-stretch ">
+                            <div class="iq-card-body">
+                                <div class="d-flex d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h2>{% if nombre_deplacements_en_cours %} {{nombre_deplacements_en_cours}} {% else %} 0 {% endif %}</h2>
+                                        <p class="fontsize-sm m-0">Déplacements en cours</p>
+                                    </div>
+                                    <div class="rounded-circle iq-card-icon iq-bg-info "><i class="fa fa-paper-plane"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-lg-8">
+                        <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h4 class="card-title" style=" font-weight: bold;"> <span id="data-type">QUANTITE DE </span> CARBURANT PAR VEHICULE DE {{ mois }}</h4>
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-primary " id="toggleDatasetButton" >CHANGER</button>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+
+                                <canvas id="fuelConsumptionChart" ></canvas>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="iq-card iq-card-block iq-card-stretch iq-card-height" style="background: transparent;">
+                            <div class="iq-card-body rounded p-0" style="background: url({% static 'images/vehicul.jpg' %}) no-repeat;    background-size: cover; height: 390px;">
+                                <div class="iq-caption">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h4 class="card-title">Nombres de déplacements effectués par vehicule en {{ mois }}</h4>
+                                </div>
+                                <div class="iq-card-header-toolbar d-flex align-items-center">
+                                    <div class="dropdown">
+                                 <span class="dropdown-toggle text-primary" id="dropdownMenuButton5" data-toggle="dropdown">
+                                 <i class="ri-more-fill"></i>
+                                 </span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <div class="table-responsive" style="height: 600px; overflow-y: auto ">
+                                    <table class="table mb-0 table-borderless" >
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Véhicule</th>
+                                            <th scope="col">Nombre de déplacement</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for vehicule in deplacements_par_vehicule %}
+                                            <tr>
+                                                <td>{{ vehicule.vehicle}}</td>
+                                                <td>{{ vehicule.total_deplacements_mois }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h4 class="card-title">Répartition des types de carburant </h4>
+                                </div>
+                                <div class="iq-card-header-toolbar d-flex align-items-center">
+                                    <div class="dropdown">
+                                 <span class="dropdown-toggle" id="dropdownMenuButton1" data-toggle="dropdown" >
+                                 <i class="ri-more-fill"></i>
+                                 </span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="pieChart" ></canvas>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Wrapper END -->
+    <!-- Footer -->
+
+    {% include 'footer.html' %}
+    <!-- Footer END -->
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        function loadVehicules(page) {
+            $.ajax({
+                url: location.href,
+                data: { page: page },
+                dataType: 'html',
+                success: function (data) {
+                    const $data = $(data);
+                    $('#vehicules-table').html($data.find('#vehicules-table').html());
+                    $('#pagination-links').html($data.find('#pagination-links').html());
+                }
+            });
+        }
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            const page = $(this).attr('data-page');
+            loadVehicules(page);
+        });
+
+        // Chargement initial des véhicules
+        loadVehicules(1);
+    </script>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#calendrier').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek'
+                },
+                height: 500,
+                events: [
+                    {% for deplacement in deplacements_planifies %}
+                        {
+                            title: '{{ deplacement.conducteur }} - {{ deplacement.vehicule }}',
+                            start: '{{ deplacement.date_depart|date:"Y-m-d" }}T{{ deplacement.heure_depart|date:"H:i:s" }}',
+                            end: '{{ deplacement.date_arrivee|date:"Y-m-d" }}T{{ deplacement.heure_arrivee|date:"H:i:s" }}'
+                        },
+                    {% endfor %}
+                ],
+                eventClick: function (event) {
+                    // Gérer le clic sur un événement
+                    alert('Clic sur l\'événement : ' + event.title);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('fuelConsumptionChart').getContext('2d');
+            var labels = {{ labels|safe }};
+            var quantites = {{ quantites|safe }};
+            var prix = {{ prix|safe }};
+            var colors = ['#d98579', '#9B59B6', '#3498DB', '#2b93b2', '#F1C40F']; // Couleurs prédéfinies pour chaque barre
+
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quantité de Carburant (Litre)',
+                        data: quantites,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 1
+                    }, {
+                        label: 'Prix Total de Carburant (Fcfa)',
+                        data: prix,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 1,
+                        hidden: true
+
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+
+                        }
+                    }
+                }
+            });
+            document.getElementById('toggleDatasetButton').addEventListener('click', function() {
+                var chartInstance = Chart.getChart(ctx);
+                var firstDataset = chartInstance.data.datasets[0];
+                var secondDataset = chartInstance.data.datasets[1];
+
+                // Basculer la visibilité des datasets
+                firstDataset.hidden = !firstDataset.hidden;
+                secondDataset.hidden = !secondDataset.hidden;
+
+                // Mettre à jour le texte en fonction du dataset affiché
+                if (firstDataset.hidden) {
+                    document.getElementById('data-type').textContent = 'PRIX';
+                } else {
+                    document.getElementById('data-type').textContent = 'QUANTITE DE';
+                }
+
+                // Mettre à jour le graphique
+                chartInstance.update();
+            });
+        });
+    </script>
+
+    <script>
+        // Récupérer les données de répartition des types de carburant depuis Django
+        const labels = {{ labels_circ|safe }};
+        const data = {{ data|safe }} ;
+
+        // Tableau de couleurs
+        const colors = ['#ff6384', '#36a2eb', '#ffce56', '#582ab2', '#4bc0c0', '#9966ff', '#ff6633', '#99cc00', '#3399ff', '#ff5050'];
+
+        // Construire les datasets
+        const datasets = [{
+            label: 'consommation de types de carburant (Litre)',
+            data: data,
+            backgroundColor: colors.slice(0, labels.length)
+        }];
+
+        // Créer un contexte pour le graphique
+        const ctx = document.getElementById('pieChart').getContext('2d');
+
+        // Créer le graphique circulaire
+        const myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Répartition des types de carburant dans le parc automobile'
+                }
+            }
+        });
+    </script>
+    </body>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+<body>
+  <!-- loader Start -->
+  <div id="loading">
+     <div id="loading-center">
+     </div>
+  </div>
+  <!-- loader END -->
+    <!-- Sign in Start -->
+    <section class="sign-in-page">
+        <div class="container bg-white mt-0 p-0">
+            <div class="row no-gutters">
+                <div class="col-sm-6 align-self-center">
+                    <div class="sign-in-from">
+                            <h1 class="mb-0 dark-signin">Changer mot de passe<i class="bi bi-person-circle"></i></h1>
+                        <form class="mt-4" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="lead">Mot de passe :</label>
+                                <input type="password" class="form-control mb-0 w-75" id="exampleInputEmail1" name="new_password1" placeholder="Entrer votre mot de passe :">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1" class="lead">Confirmez mot de passe :</label>
+                                <input type="password" class="form-control mb-0 w-75" id="exampleInputPassword1" name="new_password2" placeholder="Confirmez votre mot de passe :">
+                            </div>
+                            <div class="text-center w-100 mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 8px 16px;">Changer mot de passe</button>
+                            </div>
+                            {% include 'messaging.html' %}
+
+                            {% if form.errors %}
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                       <div class="alert alert-danger mt-4" role="alert">
+                                          <div class="iq-alert-icon">
+                                             <i class="ri-information-line"></i>
+                                          </div>
+                                          <div class="iq-alert-text"><b>{{ error }}</b></div>
+                                       </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-center">
+                    <div class="sign-in-detail text-white">
+                        <a class="sign-in-logo mb-5" style="margin-top: 100px" href="#"><img src="{% static "images/logo-white.png" %}" class="img-fluid" alt="logo"></a>
+                        <div class="slick-slider11">
+                            <div class="item">
+                                <img src="{% static 'images/vehicule.png' %}" class="img-fluid mb-4 rounded" alt="logo">
+                                <h4 class="mb-1 text-white">Parc Auto Manager-Simplifier votre Gestion Automobile!</h4>
+                                <p>Gérer votre parc automobile en toute simplicité avec Parc Auto Manager. Suivi, entretien, et gestion, tout-en-un seul endroit!</p>
+                            </div>
+                            <div class="item">
+                                <img src="{% static 'images/vehicule.png' %}" class="img-fluid mb-4 rounded" alt="logo">
+                                <h4 class="mb-1 text-white">Gérez vos informations en toute simplicité</h4>
+                                <p>Gérez efficacement votre tableau de bord et accédez à toutes les informations importantes en un seul endroit.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+      {% include 'footer-inscription.html' %}
+</body>
+{% endblock %}
+

@@ -1,0 +1,289 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <style>
+        /* Style pour les select */
+        select {
+            border-radius: 5px; /* Bord arrondi */
+            border: 1px solid #ccc; /* Bordure */
+            padding: 5px; /* Espacement interne */
+            font-size: 16px; /* Taille de la police */
+            width: 100px; /* Largeur */
+        }
+
+        /* Style pour les inputs */
+        input[type="submit"] {
+            border-radius: 5px; /* Bord arrondi */
+            border: 1px solid #ccc; /* Bordure */
+            padding: 5px 10px; /* Espacement interne */
+            font-size: 160px; /* Taille de la police */
+            cursor: pointer; /* Curseur en main */
+        }
+        button {
+            border-radius: 5px; /* Bord arrondi */
+            border: 1px solid #ccc; /* Bordure */
+            font-size: 16px; /* Taille de la police */
+            cursor: pointer; /* Curseur en main */
+            background-color: #6A4ECCFF; /* Couleur de fond */
+            color: #FFFFFF;
+        }
+
+        /* Au survol du bouton */
+        button:hover {
+            background-color: #858181; /* Couleur de fond au survol */
+        }
+
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out; /* Ajoute une transition douce pour l'effet de zoom */
+        }
+
+        .zoom-on-hover:hover {
+            transform: scale(2); /* Applique le zoom au survol */
+        }
+
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out; /* Ajoute une transition douce pour l'effet de zoom */
+        }
+
+        .zoom-on-hover:hover {
+            transform: scale(2); /* Applique le zoom au survol */
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide_admin.html' %}
+        {% include 'top_navbar_admin.html' %}
+        <!-- TOP Nav Bar -->
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <form method="post">
+                    <strong>Afficher le nombre d'incidents des véhicules du :</strong>
+                    {% csrf_token %}
+                    <label for="mois"></label>
+                    <select name="mois" id="mois">
+                        <option value="1">Janvier</option>
+                        <option value="2">Février</option>
+                        <option value="3">Mars</option>
+                        <option value="4">Avril</option>
+                        <option value="5">Mai</option>
+                        <option value="6">Juin</option>
+                        <option value="7">Juillet</option>
+                        <option value="8">Août</option>
+                        <option value="9">Septembre</option>
+                        <option value="10">Octobre</option>
+                        <option value="11">Novembre</option>
+                        <option value="12">Décembre</option>
+                    </select>
+                    <label for="annee"></label>
+                    <select name="annee" id="annee">
+                    </select>
+                    <button type="submit">Afficher</button>
+
+                </form>
+
+            </div>
+            <div>
+                <canvas id="myChart" width="300" height="100" style="margin-top: 20px"></canvas>
+                {% if  mois  and  annee  %}
+                    <div class="text-right">
+                        <button class="btn btn-primary " onclick="printCanvas()" >IMPRIMER</button>
+                    </div>
+                {% endif %}
+            </div>
+            {% if  mois  and  annee  %}
+                <div class="text-center mt-3 font-size-18 font-weight-bold bd-highlight" style="text-decoration: underline"> NOMBRE D'INCIDENT PAR CONDUCTEUR DE {{ mois|upper }} {{ annee }}</div>
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between">
+                            <div class="iq-header-title">
+                                <h4 class="card-title">RAPPORT INCIDENT CONDUCTEUR MENSUELLE  </h4>
+                            </div>
+                        </div>
+                        <div class="iq-card-body">
+                            <div>
+                                <div class="row justify-content-between">
+                                    <div class="col-sm-12 col-md-12">
+                                        <div id="user_list_datatable_info" class="dataTables_filter">
+                                            <form method="post" action="{% url 'admins:rapport_incident_conducteur_mensuel_pdf' %}" target="_blank">
+                                                <div class="row">
+
+                                                    {% csrf_token %}
+
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> Conducteur</label>
+                                                        <select class="form-control" id="conducteur" name="conducteur" style="width: 100%;">
+                                                            <option value="">Sélectionner un conducteur</option>
+                                                            {% for conducteur in conducteurs %}
+                                                                <option value="{{ conducteur.id }}">{{ conducteur }} </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> MOIS</label>
+                                                        <select class="form-control" id="mois2" name="mois" required style="width: 100%;">
+
+                                                            <option value="1">Janvier</option>
+                                                            <option value="2">Février</option>
+                                                            <option value="3">Mars</option>
+                                                            <option value="4">Avril</option>
+                                                            <option value="5">Mai</option>
+                                                            <option value="6">Juin</option>
+                                                            <option value="7">Juillet</option>
+                                                            <option value="8">Août</option>
+                                                            <option value="9">Septembre</option>
+                                                            <option value="10">Octobre</option>
+                                                            <option value="11">Novembre</option>
+                                                            <option value="12">Décembre</option>
+                                                        </select>
+
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="font-family: -apple-system; font-size: medium"> ANNEE</label>
+                                                        <select class="form-control" id="annees" name="annee" required style="width: 100%;">
+
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-12 mt-5 text-right">
+                                                        <button>VISUALISER</button>
+                                                        <button type="reset">RESET</button>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <script>
+        // Sélection de l'élément select
+        var selectAnnee = document.getElementById("annee");
+
+        // Obtention de l'année actuelle
+        var anneeActuelle = new Date().getFullYear();
+
+        // Boucle pour ajouter les options des années au select
+        for (var annee = anneeActuelle; annee >= 1900; annee--) {
+            var option = document.createElement("option");
+            option.text = annee;
+            option.value = annee;
+            selectAnnee.appendChild(option);
+        }
+    </script>
+    <script>
+        // Sélection de l'élément select
+        var selectAnnee = document.getElementById("annees");
+
+        // Obtention de l'année actuelle
+        var anneeActuelle = new Date().getFullYear();
+
+        // Boucle pour ajouter les options des années au select
+        for (var annee = anneeActuelle; annee >= 1900; annee--) {
+            var option = document.createElement("option");
+            option.text = annee;
+            option.value = annee;
+            selectAnnee.appendChild(option);
+        }
+    </script>
+    <script>
+        // Fonction pour générer des couleurs aléatoires
+        function generateRandomColors(numColors) {
+            var colors = [];
+            for (var i = 0; i < numColors; i++) {
+                var color = '#';
+                for (var j = 0; j < 6; j++) {
+                    color += '0123456789ABCDEF'[Math.floor(Math.random() * 16)];
+                }
+                colors.push(color);
+            }
+            return colors;
+        }
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var labels = {{ labels|safe }};
+        var data = {{ data|safe }};
+        var backgroundColors = generateRandomColors(labels.length);
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false // Désactive la légende
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+    </script>
+    <script>
+        function printCanvas() {
+            var canvas = document.getElementById('myChart');
+            var ctx = canvas.getContext('2d');
+
+            // Dessiner quelque chose sur le canvas si nécessaire
+
+            // Attendre un court délai pour permettre au canvas d'être correctement rendu
+            setTimeout(function() {
+                // Ouvrir une nouvelle fenêtre avec le contenu du canvas
+                var win = window.open('', '', 'width=' + canvas.width + ',height=' + canvas.height);
+                win.document.write('<html><head><title>Impression</title></head><body>');
+                win.document.write('<img src="' + canvas.toDataURL() + '" style="width:' + canvas.width + 'px; height:' + canvas.height + 'px;"/>');
+                win.document.write('</body></html>');
+                win.document.close();
+
+                // Attendre un court délai supplémentaire pour permettre au contenu d'être chargé dans la nouvelle fenêtre
+                setTimeout(function() {
+                    // Imprimer la fenêtre
+                    win.print();
+                }, 100);
+            }, 100);
+        }
+    </script>
+    <script>
+
+        $('#conducteur').select2();
+        $('#annee').select2();
+        $('#annees').select2();
+        $('#mois').select2();
+        $('#mois2').select2();
+    </script>
+    </body>
+{% endblock %}

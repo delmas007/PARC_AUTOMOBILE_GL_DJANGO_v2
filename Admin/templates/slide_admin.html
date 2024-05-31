@@ -1,0 +1,104 @@
+{% load static %}
+<div class="iq-sidebar">
+    <div class="iq-sidebar-logo d-flex justify-content-between">
+        <a href="{% url 'admins:dashboard_admins' %}">
+            <div class="iq-light-logo">
+                <div class="iq-light-logo">
+                    <img src="images/logo.gif" class="img-fluid" alt="">
+                </div>
+                <div class="iq-dark-logo">
+                    <img src="images/logo-dark.gif" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="iq-dark-logo">
+                <img src="images/logo-dark.gif" class="img-fluid" alt="">
+            </div>
+            <span style="text-transform: uppercase; font-size: 20px; color: mediumpurple">Espace admin</span>
+        </a>
+        <div class="iq-menu-bt-sidebar">
+            <div class="iq-menu-bt align-self-center">
+                <div class="wrapper-menu">
+                    <div class="main-circle"><i class="ri-arrow-left-s-line"></i></div>
+                    <div class="hover-circle"><i class="ri-arrow-right-s-line"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            {% url 'admins:Ajout_gestionnaire' as admin_Ajout_url %}
+            {% url 'admins:Compte_gestionnaire' as admin_Compte_gestionnaire_url %}
+            {% url 'admins:Ajouter_Carburant' as admin_Ajouter_Carburant_url %}
+            {% url 'admins:liste_Carburant' as admin_liste_Carburant_url %}
+            {% url 'admins:rapport_depense_admins' as admin_rapport_url %}
+            {% url 'admins:rapport_depense_mensuel_admins' as admin_rapport_mensuel_url %}
+            {% url 'admins:ChangerMotDePasse_admin' as admin_ChangerMotDePasse_admin_url %}
+            {% url 'admins:password_reset_confirms' as admin_password_reset_confirms_url %}
+            {% url 'admins:rapport_entretien_mensuel_admins' as admin_rapport_entretien_mensuel_url %}
+            {% url 'admins:rapport_carburant_mensuel_admins' as admin_rapport_carburant_mensuel_url %}
+            {% url 'admins:rapport_incident_conducteur_mensuel_admins' as admin_rapport_incident_conducteur_mensuel_url %}
+            {% url 'admins:rapport_incident_vehicule_mensuel_admins' as admin_rapport_incident_vehicule_mensuel_url %}
+            {% url 'admins:liste_deplacement_arrive_admin' as admin_liste_deplacement_arrive_url %}
+            {% url 'admins:liste_incidents_interne_admin' as liste_incident_interne_admin_url %}
+            {% url 'admins:liste_incidents_externe_admin' as liste_incident_externe_admin_url %}
+
+    <div id="sidebar-scrollbar">
+        <nav class="iq-sidebar-menu">
+            <ul id="iq-sidebar-toggle" class="iq-menu">
+                <li class="iq-menu-title"><i class="ri-subtract-line"></i></li>
+                <li >
+                    <a href="{% url 'admins:dashboard_admins' %}" class="iq-waves-effect"><i class="ri-home-4-line"></i><span>Accueil</span></a>
+                </li>
+                <li class="iq-menu-title"><i class="ri-subtract-line"></i><span>Menu</span></li>
+                <li class="{% if request.path == admin_Ajout_url or request.path == admin_Compte_gestionnaire_url %}active{% endif %}">
+                    <a href="#vehicule" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-user-line"></i><span>Gestionnaire</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="vehicule" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == admin_Ajout_url %}active{% endif %}" ><a href="{% url 'admins:Ajout_gestionnaire' %}"><i class="bi bi-person-add" style="font-size: 25px"></i>Ajouter</a></li>
+                        <li class="{% if request.path == admin_Compte_gestionnaire_url %}active{% endif %}"><a href="{% url 'admins:Compte_gestionnaire' %}"><i class="bi bi-person-lines-fill"></i> List</a></li>
+                    </ul>
+                </li>
+                <li class="{% if request.path == admin_Ajouter_Carburant_url or request.path == admin_liste_Carburant_url %}active{% endif %}">
+                    <a href="#carburant" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="bi bi-fuel-pump"></i><span > Carburant</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="carburant" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == admin_Ajouter_Carburant_url %}active{% endif %}" ><a href="{% url 'admins:Ajouter_Carburant' %}"><i class="bi bi-plus-circle"></i>Modifier</a></li>
+                        <li class="{% if request.path == admin_liste_Carburant_url %}active{% endif %}" ><a href="{% url 'admins:liste_Carburant' %}"><i class="bi bi-list-check"></i>Liste</a></li>
+
+                    </ul>
+                </li>
+                <li class="{% if request.path == admin_rapport_url or request.path == admin_rapport_mensuel_url or request.path == admin_rapport_incident_vehicule_mensuel_url or request.path == admin_rapport_incident_conducteur_mensuel_url or request.path == admin_rapport_entretien_mensuel_url or request.path == admin_rapport_carburant_mensuel_url %}active{% endif %}">
+                    <a href="#rapport" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="bi bi-file-earmark-bar-graph"></i><span > Rapport</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="rapport" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == admin_rapport_url %}active{% endif %}" ><a href="{% url 'admins:rapport_depense_admins' %}"><i class="bi bi-easel-fill"></i></i>Dépense Global</a></li>
+                        <li class="{% if request.path == admin_rapport_mensuel_url %}active{% endif %}" ><a href="{% url 'admins:rapport_depense_mensuel_admins' %}"><i class="bi bi-easel-fill"></i>Dépense Mensuelle</a></li>
+                        <li class="{% if request.path == admin_rapport_entretien_mensuel_url %}active{% endif %}" ><a href="{% url 'admins:rapport_entretien_mensuel_admins' %}"><i class="bi bi-easel-fill"></i>Entretien Mensuelle</a></li>
+                        <li class="{% if request.path == admin_rapport_carburant_mensuel_url %}active{% endif %}" ><a href="{% url 'admins:rapport_carburant_mensuel_admins' %}"><i class="bi bi-easel-fill"></i>Carburant Mensuelle</a></li>
+                        <li class="{% if request.path == admin_rapport_incident_conducteur_mensuel_url %}active{% endif %}" ><a href="{% url 'admins:rapport_incident_conducteur_mensuel_admins' %}"><i class="bi bi-easel-fill"></i>Incident conducteur Mensuelle</a></li>
+                        <li class="{% if request.path == admin_rapport_incident_vehicule_mensuel_url %}active{% endif %}" ><a href="{% url 'admins:rapport_incident_vehicule_mensuel_admins' %}"><i class="bi bi-easel-fill"></i>Incident véhicule Mensuelle</a></li>
+
+                    </ul>
+                </li>
+                <li class="{% if request.path == admin_liste_deplacement_arrive_url %}active{% endif %}">
+                    <a href="#deplacement" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="bi bi-send-plus"></i><span >Deplacement</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="deplacement" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == admin_liste_deplacement_arrive_url %}active{% endif %}" ><a href="{% url 'admins:liste_deplacement_arrive_admin' %}"><i class="bi bi-check-circle"></i>List</a></li>
+
+                    </ul>
+                </li>
+                <li class="{% if request.path == liste_incident_externe_admin_url   or request.path == liste_incident_interne_admin_url  %}active{% endif %}">
+                    <a href="#incidents" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-alert-line" style="font-size: 27px"></i><span>Incidents</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="incidents" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == liste_incident_interne_admin_url %}active{% endif %}" ><a href="{% url 'admins:liste_incidents_interne_admin' %}"><i class="bi bi-list-check"></i> Liste incidents interne </a></li>
+                        <li class="{% if request.path == liste_incident_externe_admin_url %}active{% endif %}" ><a href="{% url 'admins:liste_incidents_externe_admin' %}"><i class="bi bi-list-check"></i> Liste incidents externe </a></li>
+                    </ul>
+                </li>
+                <li class="{% if request.path == admin_password_reset_confirms_url or request.path == admin_ChangerMotDePasse_admin_url %}active{% endif %}">
+                    <a href="#reinitialiser" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="bi bi-lock"></i><span >gestion des utilisateurs</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                    <ul id="reinitialiser" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                        <li class="{% if request.path == admin_password_reset_confirms_url %}active{% endif %}" ><a href="{% url 'admins:password_reset_confirms' %}"><i class="bi bi-lock"></i>Réinitialisation</a></li>
+
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="p-3"></div>
+    </div>
+</div>

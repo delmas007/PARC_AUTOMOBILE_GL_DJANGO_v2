@@ -1,0 +1,164 @@
+
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+<body>
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+        }
+
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #6546d2;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .content-to-export{
+            margin-top: 0;
+        }
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bouton_telecharger:hover {
+            transform: scale(1.2);
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="content-page1" class="content-page1">
+                            <div class="content-to-export" id="content-to-export">
+
+                                <div class="tableau" id="tableau" >
+                                    <table class="table" id="table" style="left: auto; right: auto; padding: 20px">
+                                        <thead style="height: 100px; text-align: center; font-size: 25px">
+                                        <tr>
+                                            <th colspan="6" style="color: white" >Informations sur le carburant du Véhicule
+                                                <br>{{ carburant.vehicule.marque }}-<span style="font-size: 20px;">{{ carburant.vehicule.numero_immatriculation }}</span> <i class="ri-roadster-line"></i></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>MARQUE :</strong></td>
+                                            <td class="center-text">{{ carburant.vehicule.marque|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>MODELE :</strong></td>
+                                            <td class="center-text">{{ carburant.vehicule.type_commercial|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>NUMÉRO D'IMMATRICULATION :</strong></td>
+                                            <td class="center-text">{{ carburant.vehicule.numero_immatriculation }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>TYPE DE CARBURANT :</strong></td>
+                                            <td class="center-text">{{ carburant.type|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>QUANTITE (Litre) :</strong></td>
+                                            <td class="center-text">{{ carburant.quantite }} L</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>PRIX TOTAL :</strong></td>
+                                            <td class="center-text">{{ carburant.prix_total }} F CFA</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><strong>GESTIONNAIRE :</strong></td>
+                                            <td class="text-center">{% if carburant.utilisateur  %} {{ carburant.utilisateur|title }} {% else %} AUCUN {% endif %}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button style="text-align: center; margin-left: 700px; margin-right: auto; border: 0; margin-top: 10px" class="bouton_telecharger " onclick="generatePDF()"><a class="zoom-on-hover iq-bg-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Telecharger les informations du carburant" ><i style="text-align: center; font-size: 50px" class="ri-upload-2-fill"></i></a></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+    <script>
+        function generatePDF() {
+            var contentPage = document.getElementById('content-page1');
+            var downloadButton = contentPage.querySelector('.bouton_telecharger');
+            downloadButton.style.display = 'none';
+
+            var contentCopy = contentPage.cloneNode(true);
+            var downloadButtonCopy = contentCopy.querySelector('.bouton_telecharger');
+            if (downloadButtonCopy) {
+                downloadButtonCopy.parentNode.removeChild(downloadButtonCopy);
+            }
+
+            var options = {
+                filename: 'Carburant {{ carburant.vehicule.marque }}-{{ carburant.vehicule.numero_immatriculation }}.pdf',
+                html2canvas: { scale: 2 },
+                margin: 10,
+                output: { quality: 1.0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf(contentCopy, options).outputPdf();
+            downloadButton.style.display = 'block';
+        }
+    </script>
+    </body>
+{% endblock %}

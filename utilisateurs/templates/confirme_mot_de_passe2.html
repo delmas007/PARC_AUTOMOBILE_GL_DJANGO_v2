@@ -1,0 +1,56 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+<body>
+  <!-- loader Start -->
+  <div id="loading">
+     <div id="loading-center">
+     </div>
+  </div>
+  <!-- loader END -->
+    <!-- Sign in Start -->
+    <section class="sign-in-page">
+        <div class="container bg-white mt-0 p-0">
+            <div class="row no-gutters">
+                <div class="col-sm-6 align-self-center">
+                    <div class="sign-in-from">
+                        <h1 class="mb-0 dark-signin">Se Connecter <i class="bi bi-person-circle"></i></h1>
+                        <p class="lead" style="font-size: 15px">Changez votre mot de passe</p>
+                        <form class="mt-4" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1" class="lead">Mot de passe :</label>
+                                <input type="text" class="form-control mb-0 w-75" id="exampleInputEmail1" name="new_password1" placeholder="Entrer votre mot de passe :">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1" class="lead">Confirmez mot de passe :</label>
+                                <input type="password" class="form-control mb-0 w-75" id="exampleInputPassword1" name="new_password2" placeholder="Confirmez votre mot de passe :">
+                            </div>
+                            <div class="text-center w-100 mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 8px 16px;">Changer mot de passe</button>
+                            </div>
+
+                            {% if form.errors %}
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                       <div class="alert alert-danger mt-4" role="alert">
+                                          <div class="iq-alert-icon">
+                                             <i class="ri-information-line"></i>
+                                          </div>
+                                          <div class="iq-alert-text"><b>{{ error }}</b></div>
+                                       </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+      {% include 'footer-inscription.html' %}
+</body>
+{% endblock %}
+

@@ -1,0 +1,243 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+        }
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #6546d2;
+            color: #e5e9ed;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .content-to-export{
+            margin-top: 0;
+        }
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bouton_telecharger:hover {
+            transform: scale(1.2);
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide_admin.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar_admin.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="content-page1" class="content-page1">
+                            <div class="content-to-export" id="content-to-export">
+
+                                <div class="tableau" id="tableau" >
+                                    <table class="table" id="table" style="left: auto; right: auto; padding: 20px">
+                                        <thead style="height: 100px; text-align: center; font-size: 25px">
+                                        <tr>
+                                            <th colspan="6" class="text-white">Informations sur l'incident concernant <br> le véhicule {{ incident.vehicule.marque }} - {{ incident.vehicule.numero_immatriculation }} <i class="ri-roadster-line"></i></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>GESTIONNAIRE:</strong></td>
+                                            <td class="text-center">{% if incident.vehicule.utilisateur  %} {{ incident.vehicule.utilisateur }} {% else %} AUCUN {% endif %}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><strong>DESCRIPTION :</strong></td>
+                                            <td class="text-center">{% if incident.description_incident  %} {{ incident.description_incident }} {% else %} AUCUN {% endif %}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="imageContent"  style="align-items: center; text-align: center;">
+                                     <div>  <label style="display: block; text-align: center;text-decoration: underline;text-underline: #0b0b0b">PHOTOS DES INCIDENTS SUR VEHICULE </label></div>
+
+                                        {% for image in image %}
+                                            <img src="{{ image.images.url }}" alt="profile-img" class="vehicule-image" onclick="showImagePopup2('{{ image.images.url }}')" style=" display: inline-block;white-space: nowrap;max-width: 20%; height: auto; margin-left: 150px; margin-top: 10px">
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <button style="text-align: center; margin-left: 700px; margin-right: auto; border: 0; margin-top: 10px" class="bouton_telecharger " onclick="generatePDF()"><a class="zoom-on-hover iq-bg-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Telecharger les informations de l'incident" ><i style="text-align: center; font-size: 50px" class="ri-upload-2-fill"></i></a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer_admin.html' %}
+    <script>
+        function generatePDF() {
+            var contentPage = document.getElementById('content-page1');
+            var downloadButton = contentPage.querySelector('.bouton_telecharger');
+            downloadButton.style.display = 'none';
+            var imageContent = contentPage.querySelector('.imageContent');
+            imageContent.style.marginTop = '200px';
+
+            var contentCopy = contentPage.cloneNode(true);
+            var downloadButtonCopy = contentCopy.querySelector('.bouton_telecharger');
+            if (downloadButtonCopy) {
+                downloadButtonCopy.parentNode.removeChild(downloadButtonCopy);
+            }
+
+            var images = contentCopy.querySelectorAll('.vehicule-image');
+            for (var i = 0; i < images.length; i++) {
+                images[i].style.maxWidth = '200px';
+                images[i].style.height = 'auto';
+                images[i].style.display = 'inline-block';
+                images[i].style.marginLeft = '100px';
+                images[i].style.marginTop = '50px';
+                images[i].style.whiteSpace = 'nowrap';
+
+                if ((i + 1) % 3 === 0) {
+                    images[i].style.marginRight = '0';
+                } else {
+                    images[i].style.marginRight = '10px';
+                }
+            }
+            var options = {
+                filename: 'Incident_sur_{{ incident.vehicule.marque }}-{{ incident.vehicule.numero_immatriculation }}.pdf',
+                html2canvas: { scale: 2 },
+                margin: 10,
+                image: { type: 'jpeg', quality: 0.98, margin: { top: 10, right: 100 } },
+                output: { quality: 1.0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf(contentCopy, options).outputPdf();
+            downloadButton.style.display = 'block';
+        }
+    </script>
+
+    <script>
+        function showImagePopup(imageUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = imageUrl;
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.backgroundColor = 'white';
+            popupContainer.style.padding = '2050px';
+            popupContainer.style.background="transparent";
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+    </script>
+    <script>
+        function showImagePopup1(imageUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = imageUrl;
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.backgroundColor = 'white';
+            popupContainer.style.padding = '2050px';
+            popupContainer.style.background="transparent";
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+    </script>
+    <script>
+        function showImagePopup2(imageUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = imageUrl;
+            popupImage.style.maxWidth = '80%';
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.width = '90%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background="transparent";
+            popupContainer.style.padding = '70px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+
+    </script>
+    </body>
+{% endblock %}

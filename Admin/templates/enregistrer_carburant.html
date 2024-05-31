@@ -1,0 +1,144 @@
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide_admin.html' %}
+        {% include 'top_navbar_admin.html' %}
+        <!-- TOP Nav Bar -->
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-7" style="margin-top: 50px">
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Modifier le prix du carburant <i class="bi bi-fuel-pump"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="iq-card-body">
+                                <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-3 align-self-center mb-0" for="email">Nom du carburant :</label>
+                                        <div class="col-sm-9">
+                                         {{ form.nom }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-3 align-self-center mb-0" for="email"> Prix du carburant (F CFA) :</label>
+                                        <div class="col-sm-9">
+                                            <input type="number" class="form-control" id="exampleInputdate"  min="1" name="prix">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Modifier</button>
+                                    </div>
+                                    {% if form.errors %}
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <div class="alert alert-dark mt-4" role="alert">
+                                                    <strong>Erreur : {{ field }}</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true" style="top:0; bottom: 0">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel" style="display: flex; justify-content: center; align-items: center;">Carburant ajouter avec succes!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <img src="{% static 'images/Success.gif' %}" alt="GIF animé" style="max-width: 30%; height: auto;">
+                </div>
+                <div class="modal-footer text-center" style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="btn btn-secondary align-items-center" data-dismiss="modal">Fermer</button>
+                    <a type="button" class="zoom-on-hover btn btn-success align-items-center text-white" href="{% url 'admins:liste_Carburant' %}">Voir la liste des</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#selectVehicule2').select2();
+        });
+    </script>
+    <script>
+
+        {% if messages %}
+            {% for messages in messages %}
+                $(document).ready(function() {
+                    $('#successModal').modal('show');
+                });
+            {% endfor %}
+        {% endif %}
+        {% if form.errors %}
+            $(document).ready(function() {
+                $('#errorModal').modal('show');
+            });
+        {% endif %}
+    </script>
+    <script>
+        // Récupérer la date actuelle
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January est 0 !
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        // Affecterf la date actuelle comme date minimale
+        document.getElementById("exampleInputdate").min = today;
+    </script>
+
+    <script>
+
+        $(document).ready(function() {
+            $('#selectType').change(function () {
+                var selectTypeId = $(this).val();
+                var selectedOption = $(this).find('option:selected');
+
+                if (selectedOption === 'VIDENGE'  ) {
+                    $('#div-videnge').removeAttr('hidden disabled');
+
+                }
+            })
+        })
+    </script>
+
+
+
+
+    </body>
+{% endblock %}

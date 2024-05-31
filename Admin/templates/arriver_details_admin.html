@@ -1,0 +1,284 @@
+
+{% extends 'header_admin.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+        }
+
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #6546d2;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .content-to-export{
+            margin-top: 0;
+        }
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bouton_telecharger:hover {
+            transform: scale(1.2);
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <div class="wrapper">
+        {% include 'slide_admin.html' %}
+        {% include 'top_navbar_admin.html' %}
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="content-page1" class="content-page1">
+                            <div class="content-to-export" id="content-to-export">
+
+                                <div class="tableau" id="tableau" >
+                                    <table class="table" id="table" style="left: auto; right: auto; padding: 20px">
+                                        <thead style="height: 100px; text-align: center; font-size: 25px; color: whitesmoke">
+                                        <tr>
+                                            <th colspan="3" class="text-white">Informations du déplacement terminé <i class="bi bi-send-check-fill"></i></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>VÉHICULE :</strong></td>
+                                            <td class="center-text">{{ etat_arrive.deplacement.vehicule|title    }}</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CONDUCTEUR :</strong></td>
+                                            <td class="center-text">{{ etat_arrive.deplacement.conducteur|title }}</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>TAILLE DU RESERVOIR :</strong></td>
+                                            <td class="center-text">{{ etat_arrive.deplacement.vehicule.taille_reservoir }} Litres</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong></strong></td>
+                                            <td class="center-text"><strong>DÉPART :</strong></td>
+                                            <td class="center-text"><strong>ARRIVÉE :</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DATE :</strong></td>
+                                            <td class="center-text">{{ etat_arrive.deplacement.date_depart }}</td>
+                                            <td class="center-text">{{ etat_arrive.date_arrive }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>KILOMÉTRAGE :</strong></td>
+                                            <td class="center-text">{{ etat_arrive.deplacement.kilometrage_depart }} Km/h</td>
+                                            <td class="center-text">{{ etat_arrive.kilometrage_arrive }} Km/h</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div   style="align-items: center; text-align: center;">
+                                        <div class="jaugeContent">
+                                            <div style="overflow: auto;">
+                                                <div style="float: left; width: 50%;">
+                                                    <label style="display: block; text-align: center; text-decoration: underline; text-underline: #0b0b0b">JAUGE D'ESSENCE AU DÉPART :</label>
+                                                    <img class="jauge-image" src="{{ deplacement.photo_jauge_depart.url }}" alt="Image de la jauge" style="height: 250px; display: block; margin: 0 auto;" onclick="showImagePopup('{{ deplacement.photo_jauge_depart.url }}')">
+                                                </div>
+                                                <div style="float: right; width: 50%;">
+                                                    <label style="display: block; text-align: center; text-decoration: underline; text-underline: #0b0b0b">JAUGE D'ESSENCE À L'ARRIVÉE :</label>
+                                                    <img class="jauge-image" src="{{ etat_arrive.photo_jauge_arrive.url }}" alt="Image de la jauge" style="height: 250px; display: block; margin: 0 auto;" onclick="showImagePopup('{{ etat_arrive.photo_jauge_arrive.url }}')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="imageContent">
+
+
+                                            <div style="margin-bottom: 50px; margin-top: 35px">
+                                                <label style="display: block; text-align: center;text-decoration: underline;text-underline: #0b0b0b">PHOTOS DU VÉHICULE AU DÉPART : </label>
+                                                {% for image in images %}
+                                                    <img src="{{ image.images.url }}" alt="profile-img" class="vehicule-image" onclick="showImagePopup2('{{ image.images.url }}')" style=" display: inline-block;white-space: nowrap;max-width: 20%; height: auto; margin-left: 150px; margin-top: 10px">
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <div class="image2Content">
+                                            <div style="margin-top: 50px">  <label style="display: block; text-align: center;text-decoration: underline;text-underline: #0b0b0b">PHOTOS DU VÉHICULE A L'ARRIVÉE</label>
+                                                {% for image in image %}
+                                                    <img src="{{ image.images.url }}" alt="profile-img" class="vehicule-image" onclick="showImagePopup2('{{ image.images.url }}')" style=" display: inline-block;white-space: nowrap;max-width: 20%; height: auto; margin-left: 150px; margin-top: 10px; margin-bottom: 10px">
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button style="text-align: center; margin-left: 700px; margin-right: auto; border: 0; margin-top: 10px" class="bouton_telecharger " onclick="generatePDF()"><a class="zoom-on-hover iq-bg-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Telecharger les informations du vehicule" ><i style="text-align: center; font-size: 50px" class="ri-upload-2-fill"></i></a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer_admin.html' %}
+    <script>
+        function generatePDF() {
+            // Créez une copie spécifique pour la génération PDF
+            var contentPageCopy = document.getElementById('content-page1').cloneNode(true);
+
+            // Appliquez les styles spécifiques à la copie
+            var imageContentCopy = contentPageCopy.querySelector('.jaugeContent');
+            imageContentCopy.style.marginTop = '100px'; // Ajustez selon vos besoins
+
+            var imageContentCopy = contentPageCopy.querySelector('.imageContent');
+            imageContentCopy.style.marginTop = '350px'; // Ajustez selon vos besoins
+            var imageContentCopy = contentPageCopy.querySelector('.image2Content');
+            imageContentCopy.style.marginTop = '450px'; // Ajustez selon vos besoins
+
+            var downloadButtonCopy = contentPageCopy.querySelector('.bouton_telecharger');
+            if (downloadButtonCopy) {
+                downloadButtonCopy.parentNode.removeChild(downloadButtonCopy);
+            }
+
+            var images = contentPageCopy.querySelectorAll('.vehicule-image');
+            for (var i = 0; i < images.length; i++) {
+                images[i].style.maxWidth = '200px';
+                images[i].style.height = 'auto';
+                images[i].style.display = 'inline-block';
+                images[i].style.marginLeft = '100px';
+                images[i].style.marginTop = '50px';
+                images[i].style.whiteSpace = 'nowrap';
+
+                if ((i + 1) % 3 === 0) {
+                    images[i].style.marginRight = '0';
+                } else {
+                    images[i].style.marginRight = '10px';
+                }
+            }
+            var images = contentPageCopy.querySelectorAll('.jauge-image');
+            for (var i = 0; i < images.length; i++) {
+                images[i].style.maxWidth = '200px';
+                images[i].style.height = 'auto';
+                images[i].style.display = 'inline-block';
+                images[i].style.marginTop = '50px';
+                images[i].style.whiteSpace = 'nowrap';
+
+
+            }
+
+            var options = {
+                filename: 'DEPLACEMENT_N°-{{ etat_arrive.id }}:du {{ deplacement.date_depart }} au {{ etat_arrive.date_arrive }}.pdf',
+                html2canvas: { scale: 2 },
+                margin: 10,
+                image: { type: 'jpeg', quality: 0.98, margin: { top: 10, right: 100 } },
+                output: { quality: 1.0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Générez le PDF avec la copie spécifique
+            html2pdf(contentPageCopy, options).outputPdf().open();
+        }
+
+    </script>
+    <script>
+        function showImagePopup2(imageUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = imageUrl;
+            popupImage.style.maxWidth = '80%';
+            popupImage.style.minWidth = '60%';
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.width = '90%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background="transparent";
+            popupContainer.style.padding = '70px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+
+        function showImagePopup(photo_jauge_departURL) {
+            var popupContainer = document.createElement('div');
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.left = '50%';
+            popupContainer.style.width = '50%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+            popupContainer.style.padding = '20px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+
+            var popupImage = document.createElement('img');
+            popupImage.src = photo_jauge_departURL;
+            popupImage.style.display = 'block';
+            popupImage.style.margin = '0 auto';
+            popupImage.style.maxWidth = '100%';
+            popupImage.style.height = 'auto';
+
+            popupContainer.appendChild(popupImage);
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+
+    </script>
+    </body>
+{% endblock %}

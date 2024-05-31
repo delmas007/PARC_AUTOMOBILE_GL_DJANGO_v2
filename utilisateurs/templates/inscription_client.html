@@ -1,0 +1,177 @@
+{% extends 'header_user.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+    <!-- Nav Bar Start -->
+    {% include 'nav-bar.html' %}
+    <!-- Bottom Bar End -->
+    <!-- Breadcrumb End -->
+    <!-- Login Start -->
+{#    <div class="container">#}
+{#        <div class="row d-flex justify-content-center align-items-center" style="height: calc(100vh - 100px);">#}
+{#            <div class="col-lg-8 col-md-10">#}
+{#                <form method="post" class="shadow-form p-4" style="background-color: #FFFFFF; border-radius: 20px;">#}
+{#                   {% csrf_token %}#}
+{#                    <div class="row">#}
+{#                        <div class="col-md-12 {% if form.nom.errors %}has-error{% endif %}">#}
+{#                            <label for="username">Nom</label>#}
+{#                            <input class="form-control" type="text" id="username" placeholder="Nom" name="nom" required value="{% if form.nom.value %}{{ form.nom.value }}{% endif %}">#}
+{#                            {% if form.nom.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.nom.errors.0 }}</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                        <div class="col-md-12 {% if form.prenom.errors %}has-error{% endif %}">#}
+{#                            <label for="username">Prénoms</label>#}
+{#                            <input class="form-control" type="text" id="username" placeholder="Prénoms" name="prenom" required value="{% if form.prenom.value %}{{ form.prenom.value }}{% endif %}">#}
+{#                            {% if form.prenom.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.prenom.errors.0 }}</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                        <div class="col-md-12{% if form.username.errors %}has-error{% endif %}">#}
+{#                            <label for="username">Nom d'utilisateur</label>#}
+{#                            <input class="form-control" type="text" id="username" name="username" placeholder="Nom d'utilisateur" required value="{% if form.username.value %}{{ form.username.value }}{% endif %}">#}
+{#                            {% if form.username.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">L'username existe déjà</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                        <div class="col-md-12 {% if form.email.errors %}has-error{% endif %}">#}
+{#                            <label for="email">E-mail</label>#}
+{#                            <input class="form-control" type="email" id="email" placeholder="E-mail" name="email" required value="{% if form.email.value %}{{ form.email.value }}{% endif %}">#}
+{#                            {% if form.email.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">Un utilisateur avec cet email existe déjà</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                        <div class="col-md-12 {% if form.password1.errors %}has-error{% endif %}">#}
+{#                            <label for="password">Mot de passe</label>#}
+{#                            <input class="form-control" type="password" id="password" placeholder="Mot de passe" name="password1" required value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}">#}
+{#                            {% if form.password1.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.password1.errors.0 }}</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                        <div class="col-md-12 {% if form.password2.errors %}has-error{% endif %}">#}
+{#                            <label for="password">Répétez le mot de passe</label>#}
+{#                            <input class="form-control" type="password" id="password" placeholder="Mot de passe" name="password2" required value="{% if form.password2.value %}{{ form.password2.value }}{% endif %}">#}
+{#                            {% if form.password2.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.password2.errors.0 }}</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="row mt-4">#}
+{#                        <div class="col-md-12">#}
+{#                            <button type="submit" class="btn btn-primary btn-block" style="border-radius: 30px;">S'inscrire</button>#}
+{#                        </div>#}
+{#                        <div class="col-md-6 login-link text-center">#}
+{#                            <p>Vous avez déjà un compte ? <a href="login.html">Connectez-vous</a></p>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    <section class="text-center">
+  <!-- Background image -->
+
+  <div class="p-5 bg-image">
+     <div class="brand " >
+            <div class="container-fluid">
+                <div class="brand-slider">
+                    <div class="brand-item"><img src="{% static "img/brand-1.png"%}" alt=""></div>
+                    <div class="brand-item"><img src="{% static "img/brand-2.png"%}" alt=""></div>
+                    <div class="brand-item"><img src="{% static "img/brand-3.png"%}" alt=""></div>
+                    <div class="brand-item"><img src="{% static "img/brand-4.png"%}" alt=""></div>
+                    <div class="brand-item"><img src="{% static "img/brand-5.png"%}" alt=""></div>
+                    <div class="brand-item"><img src="{% static "img/brand-6.png"%}" alt=""></div>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <!-- Background image -->
+<div class="row" >
+<div class="col-md-2"></div>
+  <div class="card mx-4 mx-md-5 shadow-5-strong col-md-8" style="
+
+        backdrop-filter: blur(30px);
+        border-radius: 20px 20px 20px 20px;
+
+        ">
+         <div class="row d-flex justify-content-center">
+
+        <div class="col-md-6">
+          <h2 class="fw-bold mb-5" style="padding-top: 30px">INSCRIPTION</h2>
+           <form method="post" class="shadow-form p-4" style="background-color: #FFFFFF; border-radius: 20px;">
+                    {% csrf_token %}
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px" type="text" id="username" placeholder="Nom" name="nom" required value="{% if form.nom.value %}{{ form.nom.value }}{% endif %}">
+{#                            {% if form.nom.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.nom.errors.0 }}</p>#}
+{#                            {% endif %}#}
+            </div>
+               <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px"  type="text" id="username" placeholder="Prénoms" name="prenom" required value="{% if form.prenom.value %}{{ form.prenom.value }}{% endif %}">
+{#                            {% if form.prenom.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.prenom.errors.0 }}</p>#}
+{#                            {% endif %}#}
+            </div>
+               <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px"  type="text" id="username" name="username" placeholder="Nom d'utilisateur" required value="{% if form.username.value %}{{ form.username.value }}{% endif %}">
+{#                            {% if form.username.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">L'username existe déjà</p>#}
+{#                            {% endif %}#}
+            </div>
+               <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px" type="email" id="email" placeholder="E-mail" name="email" required value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+{#                            {% if form.email.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">Un utilisateur avec cet email existe déjà</p>#}
+{#                            {% endif %}#}
+            </div>
+               <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px" type="password" id="password" placeholder="Mot de passe" name="password1" required value="{% if form.password1.value %}{{ form.password1.value }}{% endif %}">
+{#                            {% if form.password1.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.password1.errors.0 }}</p>#}
+{#                            {% endif %}#}
+            </div>
+                  <!-- Email input -->
+            <div class="form-outline mb-4">
+                 <input class="form-control " style="border-radius: 10px;height: 50px;margin-bottom: 50px" type="password" id="password" placeholder="Répétez le mot de passe" name="password2" required value="{% if form.password2.value %}{{ form.password2.value }}{% endif %}">
+{#                            {% if form.password2.errors %}#}
+{#                            <p class="help-block" style="color: #f85a3b">{{ form.password2.errors.0 }}</p>#}
+{#                            {% endif %}#}
+            </div>
+              {% if form.errors %}
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <div class="alert alert-dark mt-4" role="alert">
+                                        <strong>Erreur :</strong> {{ error }}
+                                    </div>
+                                 {% endfor %}
+                            {% endfor %}
+                            {% endif %}
+
+                        <button type="submit" class="btn custom-btn form-control mt-4 mb-4" style="margin-left: -1px;border-radius: 30px;font-size: 20px;height: 50px">S'inscrire</button>
+                        <div style="margin-top: 20px;">
+
+                        <p class="text-center mb-3">Vous avez  un compte ?  <a href="{%  url 'utilisateur:connexion_user' %}">Connectez-vous</a></p>
+
+
+        </div>
+           </form>
+        </div>
+  </div>
+ </div>
+      </div>
+
+    </section>
+<!-- Section: Design Block -->
+
+{% include 'footer_user.html' %}
+</body>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-7" style="margin-top: 50px">
+
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Modifier les coûts liés au carburant <i class="bi bi-fuel-pump"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+
+                          <div class="iq-card-body">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="vehicule">Véhicule :</label>
+                                        <div class="col-sm-9">
+                                            {{ form.vehicule }}
+                                        </div>
+                                    </div>
+
+{#                                    <div class="form-group row">#}
+{#                                        <label class="control-label col-sm-2 align-self-center mb-0" for="type">Type de Carburant :</label>#}
+{#                                        <div class="col-sm-9 mt-3" readonly>#}
+{#                                            {{ form.type }}#}
+{#                                        </div>#}
+{#                                    </div>#}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="quantite">Quantité ( Litre ) :</label>
+                                        <div class="col-sm-9">
+                                            {{ form.quantite }}
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Enregistrer les modifications</button>
+
+                                    {% if form.errors %}
+                                        {% for field, errors in form.errors.items %}
+                                            {% for error in errors %}
+                                                <div class="alert alert-dark mt-4" role="alert">
+                                                    <strong>Erreur : {{ field }}</strong> {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Wrapper END -->
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <script>
+        {% if messages %}
+            {% for messages in messages %}
+                $(document).ready(function() {
+                    $('#successModal').modal('show');
+                });
+            {% endfor %}
+        {% endif %}
+        {% if form.errors %}
+            $(document).ready(function() {
+                $('#errorModal').modal('show');
+            });
+        {% endif %}
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#selectVehicule').select2();
+        });
+        $(document).ready(function() {
+            $('#selectType').select2();
+        });
+    </script>
+    <script>
+        // Récupérer la date actuelle
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January est 0 !
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        // Affecterf la date actuelle comme date minimale
+        document.getElementById("exampleInputdate").min = today;
+    </script>
+
+
+
+
+    </body>
+{% endblock %}

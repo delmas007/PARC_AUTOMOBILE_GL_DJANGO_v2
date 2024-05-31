@@ -1,0 +1,102 @@
+{% load static %}
+
+<style>
+
+
+
+
+</style>
+
+<div class="top-bar" style="background-color: #FFFFFF; color: #0b0b0b;height: 50px;">
+    <div class="container-fluid" style="margin-top: 7px">
+        <strong >
+        <div class="row" >
+            <div class="col-sm-6">
+                <i class="fa fa-envelope" ></i>
+               <strong>support@email.com</strong>
+            </div>
+            <div class="col-sm-6">
+                <i class="fa fa-phone-alt"></i>
+               <strong>+012-345-6789</strong>
+            </div>
+        </div>
+        </strong>
+    </div>
+</div>
+<div class="nav" >
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <a href="#" class="navbar-brand">MENU</a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse" style="height: 60px;">
+                <div class="navbar-nav mr-auto">
+                    <a href="{% url 'utilisateur:Accueil_user' %}" class="nav-item nav-link active" style="font-size: 15px; font-weight: bold" >Accueil</a>
+                    <a href="{% url 'utilisateur:list_vehicule'%}" class="nav-item nav-link" style="font-size: 15px; font-weight: bold" >Véhicules</a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'utilisateur:compte'%}" class="nav-item nav-link" style="font-size: 15px; font-weight: bold" >Compte</a>
+                    {% endif %}
+                    <!-- <a href="product-detail.html" class="nav-item nav-link">Détail du Véhicule</a> -->
+                    <!--<a href="cart.html" class="nav-item nav-link">Cart</a> -->
+                    <!--  <a href="checkout.html" class="nav-item nav-link">Demande</a> -->
+                    <!-- <a href="my-account.html" class="nav-item nav-link">Mon compte</a> -->
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" style="font-size: 15px; font-weight: bold"> Pages</a>
+                        <div class="dropdown-menu">
+                            <a href="wishlist.html" class="dropdown-item" style="font-size: 15px; font-weight: bold">Liste des demandes</a>
+                            <a href="contact.html" class="dropdown-item" style="font-size: 15px; font-weight: bold">Contactez-nous</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="navbar-nav ml-auto">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'Model:Deconnexion'%}" class="nav-item nav-link" style="font-size: 15px; font-weight: bold"><i class="fa fa-sign-out-alt"></i>Déconnexion</a>
+                    {% else %}
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"style="font-size: 15px; font-weight: bold">Utilisateur</a>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'utilisateur:connexion_user'%}" class="dropdown-item">Se connecter </a>
+                                <a href="{% url 'utilisateur:Inscription_user'%}" class="dropdown-item">S'inscrire</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- Nav Bar End -->
+
+<!-- Bottom Bar Start -->
+<div class="bottom-bar">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="img/logo.png" alt="Logo">
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+            </div>
+            {% if request.user.is_authenticated %}
+            <div class="col-md-3">
+                <div class="user">
+                    <a href="wishlist.html" class="btn wishlist">
+                        <i class="fa fa-heart"></i>
+                        <span>(0)</span>
+                    </a>
+                    <a href="cart.html" class="btn cart">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>(0)</span>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

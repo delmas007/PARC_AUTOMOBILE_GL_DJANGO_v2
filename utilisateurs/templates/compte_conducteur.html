@@ -1,0 +1,1155 @@
+{% extends 'header_conducteur.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .loading {
+            position: relative;
+            display: inline-block;
+        }
+        .loading::after {
+            content: 'C';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid blue;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .warning {
+            color: #212529;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .modal-custom {
+            max-width: 90%;
+        }
+
+        .modal-dialog.modal-custom .modal-content {
+            width: 100%;
+        }
+
+        .version {
+            position: absolute;
+            bottom: 100px;
+            right: auto;
+            left: auto;
+            color: gray;
+            text-align: center;
+            width: 100%;
+            transform: translateY(-50%);
+        }
+        .no-requests {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .no-requests p:first-child {
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .no-requests p:last-child {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .response-message {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .message-text {
+            margin: 0;
+            font-size: 18px;
+            color: #721c24;
+        }
+        .response-demande-accepted {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+            background-color: #e2e3e5;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+        }
+        .response-demande-rejected {
+            background-color: #f8d7da;
+            border: 2px solid #721c24;
+            border-radius: 8px;
+        }
+        .response-demande-pending {
+            background-color: #3862e7;
+            border: 2px solid #032754;
+            border-radius: 8px;
+        }
+        .response-demande .message-text1 {
+            margin: 0;
+            padding: 15px;
+            font-size: 18px;
+        }
+        .response-demande-accepted .message-text1 {
+            color: #155724;
+        }
+        .response-demande-rejected .message-text1 {
+            color: #9b1e2a;
+        }
+        .response-demande-pending .message-text1 {
+            color: #b7bfe5;
+        }
+        .notification-icon {
+            position: relative;
+            display: inline-block;
+        }
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+        .notification-icon i {
+            color: #39399b;
+            font-size: 25px;
+        }
+
+        .notifi-box {
+            background-color: white;
+            width: 300px;
+            height: 0px;
+            opacity: 0;
+            position: absolute;
+            top: 63px;
+            right: 35px;
+            transition: 1s opacity, 250ms height;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+        .notifi-box h2 {
+            font-size: 14px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #999;
+        }
+        .notifi-box h2 span {
+            color: #f00;
+        }
+        .notifi-item {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 15px 5px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .notifi-item:hover {
+            background-color: #eee;
+        }
+        .notifi-item img {
+            display: block;
+            width: 50px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .notifi-item .text h4 {
+            color: #777;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .notifi-item .text p {
+            color: #aaa;
+            font-size: 12px;
+        }
+        .notif:hover{
+            background-color: #9e60d9;
+            color:white;
+        }
+        .blurred {
+            filter: blur(4px);
+        }
+
+
+    </style>
+    <body>
+    {% url 'utilisateur:liste_mission' as liste_mission %}
+    {% url 'utilisateur:prolongement_lu_details' as prolongement_lu_details %}
+    {% url 'utilisateur:list_de_demande_prolongement' as list_de_demande_prolongement %}
+    {% url 'utilisateur:declare_incident' as declare_incident %}
+    {% url 'utilisateur:ChangerMotDePasseConducteur' as ChangerMotDePasseConducteur %}
+    <nav class="menu__wrapper">
+        <div class="logo__wrapper">
+            <a class="text-white h2"
+               id="dashboard-nav" href=" {% url 'utilisateur:liste_mission' %}" role="tab">
+                <i class="bi bi-speedometer2"></i>
+            </a>
+        </div>
+        <div class="action-buttons">
+            <a {% if request.path == list_de_demande_prolongement %}active{% else %} {% endif %} id="payment-nav"
+               href=" {% url 'utilisateur:list_de_demande_prolongement' %}">
+                <button class="action-button text-white h4">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </a>
+            <a {% if request.path == declare_incident %}active{% else %} {% endif %} id="payment-nav"
+               href=" {% url 'utilisateur:declare_incident' %}" style="margin-right: 20px">
+                <button class="action-button text-white h4">
+                    <i class="bi bi-fire"></i>
+                </button>
+                <a class="nav__link h3 text-white mr-5" id="avatar-navbars">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>
+        </div>
+    </nav>
+    <nav class="Entete" style=" justify-content: center; align-items: center;">
+        <div id="entete-container" class="col-7" style="text-align: center; color: white; font-weight: bold; margin-left: 50px;">
+            {% if request.path == liste_mission %}
+                <span>ACCUEIL</span>
+            {% endif %}
+            {% if request.path == declare_incident %}
+                <span>INCIDENT</span>
+            {% endif %}
+            {% if request.path == list_de_demande_prolongement %}
+                <span>DEMANDES</span>
+            {% endif %}
+            {% if request.path == ChangerMotDePasseConducteur %}
+                <span style="font-size: 12px">Mot de passe</span>
+            {% endif %}
+            {% if request.path == prolongement_lu_details %}
+                <span>DETAILS</span>
+            {% endif %}
+        </div>
+        <div class="col "  style="flex-grow: 1;">
+            <div class="notification-icon"  onclick="toggleNotifi()" >
+                <i class="fas fa-bell" ></i>
+                {% if prolongements_non_lus %}<span class="badge">{{ prolongements_non_lus.count }}</span>{% else %}{% endif %}
+            </div>
+
+        </div>
+        <div class="col "  style="flex-grow: 1;">
+            <a class="nav__link" id="avatar-navbars1" onclick="toggleMenu1()" style="color: white; font-size: 20px">
+                <i class="bi bi-list"></i>
+            </a>
+
+        </div>
+        <div class="notifi-box none" id="box">
+            <h2>Notifications</h2>
+            <div  style="overflow-y: auto">
+                {% if prolongements_non_lus %}
+                    {% for prolongement in prolongements_non_lus %}
+                        <div class="notifi-item" id="accepte_{{ prolongement.id }}" onclick="dismissNotification('{{ prolongement.id }}')">
+                            <div class="post notif">
+                                <div class="user-blo">
+                                    <span class="username">
+                                         <a href="#">Deplacelement {{ prolongement.deplacement }}</a>
+                                     </span>
+                                    <span class="description">Recu {{ prolongement.time_since_reponse }}</span>
+                                </div>
+                                <p class="text">
+                                    {{ prolongement.motif|truncatewords:6  }}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    aucune notification
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <div class="navigation__menu none" style="overflow-y:auto">
+        <div class="avatar-wrapper" style="background-image: url('{% static 'images/conducteur.png' %}');">
+            <div class="">
+
+            </div>
+            <button class="close-button avatar-profile">
+                <i class="bi bi-list "></i>
+            </button>
+            <div class=" avatar-name-wrapper">
+                <div class="row">
+                    <div class="avatar-name-alias">
+                        <div class="avatar-name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="navigation__menu__items">
+            <li>
+                &#128640; Menu
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link  " id="dashboard-nav" href=" {% url 'utilisateur:liste_mission' %}" role="tab"
+                   data-target="#orders-tab" style="margin-right: 20px"><i class="bi bi-speedometer2"></i>Accueil</a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link " id="orders-nav" href=" {% url 'utilisateur:list_de_demande_prolongement' %}"
+                   role="tab" data-target="#orders-tab" style="margin-right: 20px"><i class="fa fa-paper-plane"></i>
+                    Voir mes demandes
+                </a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link  " id="orders-nav" href=" {% url 'utilisateur:declare_incident' %}" role="tab" data-target="#orders-tab" style="margin-right: 20px"> <i class="bi bi-fire"></i>
+                    Declarer un incident
+                </a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link " id="orders-nav" href=" {% url 'utilisateur:ChangerMotDePasseConducteur' %}"
+                   role="tab" data-target="#orders-tab" style="margin-right: 20px"><i class="bi bi-file-lock2"></i>
+                    Changer mot de passe
+                </a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a href="{% url 'Model:deconnexion' %}" class="nav-link" data-target="#orders-tab">
+                    <i class="bi bi-box-arrow-right">
+                        Déconnexion
+                        (<span style="color: #1a88ff">{{ user.nom }} {{ user.prenom }}</span>)
+                    </i>
+                </a>
+
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+
+            </li>
+            <li>
+                <span style="font-size: 10px"><i class="bi bi-shield-lock"></i> Vos informations sont protegés avec le
+                    <span style="color: #149832">chiffrement de bout en bout</span>
+                </span>
+            </li>
+        </ul>
+        <div class="version">Version 1.0.1</div>
+    </div>
+    <div class="navigation__menu1  none" style="overflow-y:auto">
+        <div class="avatar-wrapper" style="background-image: url('{% static 'images/conducteur.png' %}');">
+            <div class="">
+            </div>
+            <div class=" avatar-name-wrapper">
+                <div class="row">
+                    <div class="avatar-name-alias">
+                        <div class="avatar-name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="navigation__menu__items1">
+            <li>
+                &#128640; Menu
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link" id="dashboard-nav" href=" {% url 'utilisateur:liste_mission' %}" role="tab"
+                   data-target="#orders-tab" style="margin-right: 20px"><i class="bi bi-speedometer2"></i>Accueil</a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link " id="orders-nav" href=" {% url 'utilisateur:list_de_demande_prolongement' %}"
+                   role="tab" data-target="#orders-tab" style="margin-right: 20px"><i class="fa fa-paper-plane"></i>Voir
+                    mes demandes</a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link  " id="orders-nav" href=" {% url 'utilisateur:declare_incident' %}" role="tab"
+                   data-target="#orders-tab" style="margin-right: 20px"> <i class="bi bi-fire"></i>Declarer un incident</a>
+
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a class="nav-link " id="orders-nav" href=" {% url 'utilisateur:ChangerMotDePasseConducteur' %}"
+                   role="tab" data-target="#orders-tab" style="margin-right: 20px"><i class="bi bi-file-lock2"></i>Changer
+                    mot de passe</a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <a href="{% url 'Model:deconnexion' %}" class="nav-link" data-target="#orders-tab"><i class="bi bi-box-arrow-right"> Déconnexion (<span style="color: #1a88ff">{{ user.nom }} {{ user.prenom }}</span>)</i></a>
+            </li>
+            <li class="separator">
+                <hr>
+            </li>
+            <li>
+                <span style="font-size: 10px"><i class="bi bi-shield-lock"></i> Vos informations sont protegés avec le <span style="color: #149832">chiffrement de bout en bout</span></span>
+            </li>
+        </ul>
+        <div class="version">Version 1.0.1</div>
+    </div>
+    <div class="content " id="content-container">
+        <div class="my-account">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show {% if request.path == liste_mission %}active{% else %} {% endif %}  text-center "
+                                 id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <div>
+                                    <h3>Liste des missions</h3>
+                                </div>
+                                {% if mission %}
+                                    {% for deplacement in mission %}
+                                        <div class="card card-primary card-outline direct-chat direct-chat-primary">
+                                            <div class="card-header">
+                                                <h3 class="card-title col-sm-4">Deplacement: {{ deplacement.description }}</h3>
+                                                <div class="card-tools">
+                                                    <a href="{% url 'utilisateur:detail_prolongement' deplacement.id %}"  title="Voir les détails de la mission" style="font-size: 20px">
+                                                        <i class="bi bi-eye-fill"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body box-profile" style="margin-right: 25px">
+                                                <div class="text-center">
+                                                    {% for photo_vehicule in photo_vehicules %}
+                                                        {% if photo_vehicule.deplacement_id == deplacement.id %}
+                                                            <img src="{{ photo_vehicule.images.url }}" alt="Image du véhicule">
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <p class="text-muted text-center h6">Le deplacement prendra fin normalement le {{ deplacement.date_fin }}</p>
+                                                <ul class="list-group list-group-unbordered mb-3">
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-md-4 text-left"><b>Vehicule</b></div>
+                                                            <div class="col-md-4 text-right"><a class="float-right text-primary">{{ deplacement.vehicule }}</a></div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-md-4 text-left"><b>Date depart</b></div>
+                                                            <div class="col-md-4 text-right"><a
+                                                                    class="float-right text-primary">{{ deplacement.date_depart }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-md-4 text-left"><b>Durée</b></div>
+                                                            <div class="col-md-4 text-right"><a class="float-right text-primary">
+                                                                    {{ deplacement.duree_deplacement }}
+                                                            </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-md-4 text-left"><b>Kilometrage</b></div>
+                                                            <div class="col-md-4 text-right"><a
+                                                                    class="float-right text-primary">{{ deplacement.kilometrage_depart }}
+                                                                Km/h</a></div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                {% if deplacement.date_depart <= date_aujourdui %}
+
+                                                    {% if deplacement.id not in prolongement_encours and deplacement.id not in prolongement_refuse and deplacement.id not in prolongement_accepter %}
+
+                                                        <button style="background-color: blueviolet; color: aliceblue; width: 100%"
+                                                                type="button" class="btn mb-3 btn-info terminer-btn"
+                                                                data-toggle="modal" data-target="#modal_prolongement_2"
+                                                                onclick="ouvrirModal1(this)"
+                                                                data-deplacement-id="{{ deplacement.id }}"
+                                                                data-vehicules-id="{{ deplacement.vehicule.id }}"><b>Demander prolongement</b></button>
+                                                    {% elif deplacement.id in prolongement_encours and deplacement.id not in prolongement_refuse and deplacement.id not in prolongement_accepter %}
+                                                        <span style="border:none; background-color: #2db92f; color: white; cursor: auto"
+                                                              class="btn mb-3 btn-infot">
+                                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-file-check-fill"
+                                                            viewBox="0 0 16 16">
+                                                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-1.146 6.854-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                                                        </svg>
+                                                       Demande déja faites
+                                                   </span>
+                                                    {% elif deplacement.id not in prolongement_encours and deplacement.id  in prolongement_refuse or  deplacement.id  in prolongement_accepter %}
+                                                        <div class="response-message">
+                                                            <p class="message-text">Une réponse a été envoyée concernant votre demande. Veuillez consulter votre espace personnel ou votre boîte de réception pour prendre connaissance de la réponse.</p>
+                                                        </div>
+
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="no-requests">
+                                        <p>Vous n'avez aucune mission programmée.</p>
+                                        <p></p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane fade show {% if request.path == list_de_demande_prolongement %}active{% else %} {% endif %} text-center "
+                                 id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <div class="table-responsive" style="margin-top: 60px">
+                                    {% if demande %}
+                                        <table id="user-list-table" class="table table-striped table-borderless mt-4" role="grid" aria-describedby="user-list-page-info">
+                                            <thead>
+                                            <tr style="background-color: #8861d2; color:white">
+                                                <th>Durée</th>
+                                                <th>Motif</th>
+                                                <th>Status</th>
+                                                <th> </th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for prolong in demande %}
+                                                <tr>
+                                                    <td>{{ prolong.duree }}</td>
+                                                    <td>{{ prolong.motif|truncatewords:6 }}{{ prolongement.motif|truncatewords:6  }}</td>
+                                                    <td>
+                                                        <div class="response-demande-{% if prolong.accepter %}accepted{% elif prolong.refuser %}rejected{% else %}pending{% endif %}">
+                                                            <p class="message-text1 {% if prolong.accepter %} accepted {% elif prolong.refuser %} rejected  {% else %} pending{% endif %}"> {% if prolong.accepter %}Votre demande a été  acceptée ! ✅{% elif prolong.refuser %}Votre demande a été rufusée! ❌ {% else %}Traitements en cours...{% endif %}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <div class="no-requests">
+                                            <p>Vous n'avez aucune demande en cours.</p>
+                                            <p> Vos demandes seront affichées ici une fois soumises."</p>
+                                        </div>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show {% if request.path == declare_incident %}active{% else %} {% endif %} text-center "
+                                 id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <div>
+                                    <h4>Mission en cours</h4>
+                                </div>
+                                {% if mission %}
+                                    {% for deplacement in mission %}
+                                        <div class="card card-primary card-outline direct-chat direct-chat-primary">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Deplacement {{ deplacement.id }}</h3>
+
+                                                <div class="card-tools">
+                                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body box-profile" style="margin-right: 25px">
+                                                <div class="text-center">
+                                                    {% for photo_vehicule in photo_vehicules %}
+                                                        {% if photo_vehicule.deplacement_id == deplacement.id %}
+                                                            <img class=" img-fluid" src="{{ photo_vehicule.images.url }}" alt="User  picture" style="max-height: 10ch;">
+                                                        {% endif %}
+                                                    {% endfor %}
+
+
+                                                </div>
+
+                                                <p class="text-muted text-center h6">
+                                                     En cas d'incident sur ce deplacement, vous pouvez le declarer en appuyant sur le bouton "declarer un incident"</p>
+
+                                                <ul class="list-group list-group-unbordered mb-3">
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4"><b>Vehicule</b></div>
+                                                            <div class="col"><a
+                                                                    class="float-right text-primary">{{ deplacement.vehicule }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4"><b>Date depart</b></div>
+                                                            <div class="col"><a
+                                                                    class="float-right text-primary">{{ deplacement.date_depart }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4"><b>Durée</b></div>
+                                                            <div class="col"><a class="float-right text-primary">
+                                                                {% if prolongements.deplacement.id == deplacement.id %}
+                                                                    {{ deplacement.duree_deplacement|add:prolongements.duree }}
+                                                                {% else %}
+                                                                    {{ deplacement.duree_deplacement }}
+                                                                {% endif %}
+                                                            </a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-4"><b>Kilometrage</b></div>
+                                                            <div class="col"><a
+                                                                    class="float-right text-primary">{{ deplacement.kilometrage_depart }}
+                                                                Km/h</a></div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <button style="width: 100%; background-color: #4b2db9; color: white"
+                                                        type="button" class="btn mb-3 btn-info enregistrer-btn"
+                                                        onclick="ouvrirModal(this)"
+                                                        data-deplacement-id="{{ deplacement.id }}"
+                                                        data-vehicule-id="{{ deplacement.vehicule.id }}">
+                                                    <i class="bi bi-fire" style="font-size: 20px"></i>
+                                                    Déclarer un incident
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="no-requests">
+                                        <p>Désoler! vous ne pouvez pas declarer d'incident pour le moment</p>
+                                        <p></p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="tab-pane fade show {% if request.path == ChangerMotDePasseConducteur %}active{% else %} {% endif %}"
+                                 id="account-tab" role="tabpanel" aria-labelledby="account-nav">
+                                <h4>Changer mot de passe</h4>
+
+                                <form method="post" action="{% url 'utilisateur:ChangerMotDePasseConducteur' %}">
+                                    <div class="row">
+                                        {% csrf_token %}
+                                        <div class="col-md-12">
+                                            <input class="form-control" type="password"
+                                                   placeholder="Mot de passe actuel" name="passe">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="password"
+                                                   placeholder="Nouveau mot de passe" name="new_password1">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="password"
+                                                   placeholder="Confirmé nouveau mot de passe" name="new_password2">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button class="btn">Changer</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.tags == 'success' %}
+                                            <div class="alert alert-dark mt-4" role="alert">
+                                                <strong>{{ message }}</strong>
+                                            </div>
+                                        {% elif message.tags == 'error' %}
+                                            <div class="alert alert-dark mt-4" role="alert">
+                                                <strong>Erreur: {{ message }}</strong>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+
+                            </div>
+                            <div class="tab-pane fade show {% if request.path == prolongement_lu_details %}active{% else %} {% endif %} text-center " id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
+                                <h6 style="color: #333;">Informations de la demande de prolongement</h6>
+
+                                <ul style="list-style-type: none; padding-left: 0;">
+                                    <li style="color: #555;">
+                                        La demande de prolongement que vous avez effectuée le {{ prolongement_details.date_mise_a_jour }} pour une durée de  {{ prolongement_details.duree }} jours
+                                        qui a pour motif "{{ prolongement_details.motif }}" a été
+                                        {% if prolongement_details.accepter %}
+                                            <span style="color: green;">acceptée</span>. Votre déplacement prendra fin le {{ prolongement_details.date_fin }}.
+                                        {% elif prolongement_details.refuser %}
+                                            <span style="color: red;">refusée</span>. Votre déplacement prendra fin le {{ prolongement_details.ajout }}.
+                                        {% endif %}
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade " id="modal_prolongement_2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-custom" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalScrollableTitle">Demande de
+                            prolongement {{ deplacement.id }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="iq-card-body" style="overflow-y: auto">
+                        <form class="form-horizontal demande-prolongement-form" id="DeplacementArriverForm" method="post"
+                              enctype="multipart/form-data" action="{% url 'utilisateur:prolongement' %}">
+                            {% csrf_token %}
+                            <input type="hidden" id="deplacement_id" name="deplacement_id">
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2 align-self-center mb-0" for="duree">Durée ( jours
+                                    ):</label>
+                                <div class="col-sm-10">
+                                    <input type="number" min="1" class="form-control" id="duree" name="duree" required
+                                           placeholder="Entrer le nombre de jour">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2 align-self-center mb-0" for="motif">Modif:</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="motif" name="motif" required
+                                              placeholder="Veillez decrire le motif de votre prolongement"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="control-label col-sm-2 align-self-center mb-0" for="exampleInputdate">Kilométrage:</label>
+                                <div class="col-sm-10">
+                                    <input type="number" min="0" class="form-control" id="exampleInputdate"
+                                           name="kilometrage" required>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="photo_jauge_demande" class="font-weight-bold">Photo de la jauge:</label>
+                                <div class="form-control h-auto" style="border-radius: 10px">
+                                    <input required placeholder="Choisir une image" type="file"
+                                           class="form-control-file" accept="image/*" id="photo_jauge_demande"
+                                           name="photo_jauge_demande"
+                                           value="{% if form.images.value %}{{ form.images.value }}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="customFile" class="font-weight-bold">Sélectionner des images du vehicule
+                                    :</label>
+                                <div class="form-control h-auto" style="border-radius: 10px">
+                                    <input multiple required placeholder="Choisir une image" type="file"
+                                           class="form-control-file" accept="image/*" id="customFile" name="images"
+                                           value="{% if form.images.value %}{{ form.images.value }}{% endif %}">
+                                </div>
+                                {% if form.images.errors %}
+                                    <p class="help-block">Veillez joindre une image</p>
+                                {% endif %}
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row ">
+                                    <div class="col-6">
+                                        <button id="submitButtonProlongement" type="submit" class="btn btn-primary"
+                                                style="background-color: #ff7a29; border-color: #ff7a29; color: white;">
+                                            Enregistrer
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                                onclick="fermerModal()">Fermer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div >
+        <div class="modal fade" id="modal_incident_2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true" >
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalScrollableTitle">Signalement
+                            d'incident {{ deplacement.id }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="iq-card-body" style="overflow-y: auto">
+                        <form class="form-horizontal" id="DeplacementArriverForm" method="post"
+                              enctype="multipart/form-data" action="{% url 'utilisateur:sendIncident' %}">
+                            {% csrf_token %}
+                            <input type="hidden" id="deplacement2_id" name="deplacement2_id">
+                            <input type="hidden" id="vehicule_id" name="vehicule_id">
+
+                            <div class="form-group row">
+
+                                <label class="control-label col-sm-4 align-self-center mb-0" for="description_incident">DESCRIPTION: </label>
+
+                                <div class="col-sm-8">
+                                    <textarea rows="10" class="form-control" id="description_incident"
+                                              name="description_incident" required
+                                              placeholder="Veillez decrire l'incident"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="customFile" class="font-weight-bold">SELECTIONNEZ IMAGE DU VEHICULE
+                                    :</label>
+                                <div class="form-control h-auto" style="border-radius: 10px">
+                                    <input multiple required placeholder="Choisir une image" type="file"
+                                           class="form-control-file" accept="image/*" id="customFile" name="images"
+                                           value="{% if form.images.value %}{{ form.images.value }}{% endif %}">
+                                </div>
+                                {% if form.images.errors %}
+                                    <p class="help-block">Veillez joindre une image</p>
+                                {% endif %}
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row ">
+                                    <div class="col-6">
+                                        <button type="submit" class="btn btn-primary"
+                                                style="background-color: #ff7a29; border-color: #ff7a29; color: white;">
+                                            Enregistrer
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                                onclick="fermerModal()">Fermer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="existImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-center "
+                            style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                            Erreur!!!
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                 viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet"
+                                 style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                                <defs>
+                                    <clipPath id="__lottie_element_699">
+                                        <rect width="1080" height="1080" x="0" y="0">
+
+                                        </rect>
+                                    </clipPath>
+                                </defs>
+                                <g clip-path="url(#__lottie_element_699)">
+                                    <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1"
+                                       fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal"
+                                       font-weight="700" aria-label="!" style="display: block;">
+                                        <g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4"
+                                           transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1"
+                                           style="display: inherit;">
+                                            <g>
+                                                <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                                    <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                                    </path>
+                                                    <g opacity="1"
+                                                       transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)"
+                                       opacity="1" style="display: block;">
+                                        <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                            <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0"
+                                                  stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28"
+                                                  d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                            </path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </h1>
+                    </div>
+                    <div class="modal-body text-danger" style="font-size: 30px">
+                        Vous ne pouvez selectionner que 6 Images
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="existImage2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-center "
+                            style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                            Erreur!!!
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                 viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet"
+                                 style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                                <defs>
+                                    <clipPath id="__lottie_element_699">
+                                        <rect width="1080" height="1080" x="0" y="0">
+
+                                        </rect>
+                                    </clipPath>
+                                </defs>
+                                <g clip-path="url(#__lottie_element_699)">
+                                    <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1"
+                                       fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal"
+                                       font-weight="700" aria-label="!" style="display: block;">
+                                        <g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4"
+                                           transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1"
+                                           style="display: inherit;">
+                                            <g>
+                                                <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                                    <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                                    </path>
+                                                    <g opacity="1"
+                                                       transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)"
+                                       opacity="1" style="display: block;">
+                                        <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                            <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0"
+                                                  stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28"
+                                                  d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                            </path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </h1>
+                    </div>
+                    <div class="modal-body text-danger" style="font-size: 30px">
+                        Veillez selectionner au moin une image
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var fileInput = document.getElementById('customFile');
+            fileInput.addEventListener('change', function (event) {
+                var selectedFiles = event.target.files;
+                var maxAllowedFiles = 6;
+                if (selectedFiles.length > maxAllowedFiles) {
+                    $('#existImage').modal('show');
+                    fileInput.value = '';
+                }
+            });
+        });
+    </script>
+    <script>
+        function ouvrirModal(button) {
+            var deplacementId = button.dataset.deplacementId;
+            var vehiculeId = button.dataset.vehiculeId;
+            document.getElementById('deplacement2_id').value = deplacementId;
+            document.getElementById('vehicule_id').value = vehiculeId;
+            $('#modal_incident_2').modal('show');
+        }
+    </script>
+    <script>
+        function ouvrirModal1(button) {
+            var deplacementId = button.dataset.deplacementId;
+            var vehiculeId = button.dataset.vehiculeId;
+            document.getElementById('deplacement_id').value = deplacementId;
+            document.getElementById('vehicule_id').value = vehiculeId;
+            $('#modal_prolongement_2').modal('show');
+        }
+    </script>
+    <script>
+        function loadPage(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    document.getElementById('content-container').innerHTML = xhr.responseText;
+                } else {
+                    console.error('Erreur de chargement de la page: ' + xhr.statusText);
+                }
+            };
+            xhr.send();
+        }
+        document.querySelectorAll('.nav__link').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                var url = link.getAttribute('href');
+                loadPage(url);
+            });
+        });
+    </script>
+    <script>
+        const navigationMenu1 = document.querySelector('.navigation__menu1');
+        const bouton1 = document.getElementById('avatar-navbars1');
+        let menuIsOpen1 = false;
+
+        document.addEventListener('mousedown', function (event) {
+            const isClickInsideMenu1 = navigationMenu1.contains(event.target);
+            const isClickInsideButton1 = bouton1.contains(event.target);
+            if (!isClickInsideMenu1 && !isClickInsideButton1 && menuIsOpen1) {
+                closeMenu1();
+            }
+        });
+        function toggleMenu1() {
+            if (!menuIsOpen1) {
+                navigationMenu1.classList.remove('none');
+                navigationMenu1.classList.remove('hide');
+                menuIsOpen1 = true;
+            } else {
+                closeMenu1();
+            }
+        }
+        function closeMenu1() {
+            navigationMenu1.classList.add('hide');
+            menuIsOpen1 = false;
+        }
+    </script>
+    <script>
+        var box = document.getElementById('box');
+        const boxButton = document.querySelector('.notification-icon');
+        var contentContainer = document.getElementById('content-container');
+        var down = false;
+
+        function toggleNotifi() {
+            if (down) {
+                closeBox();
+                contentContainer.classList.remove('blurred');
+            } else {
+                openBox();
+                contentContainer.classList.add('blurred');
+            }
+        }
+
+        function openBox() {
+            box.style.height = '410px';
+            box.style.opacity = 1;
+            box.classList.remove('hide');
+            box.classList.remove('none');
+            down = true;
+        }
+
+        function closeBox() {
+            box.classList.add('hide');
+            down = false;
+        }
+
+        document.addEventListener('mousedown', function (event) {
+            const isClickInsideBox = box.contains(event.target);
+            const isClickInsideBoxButton = boxButton.contains(event.target);
+            if (!isClickInsideBox && !isClickInsideBoxButton && down) {
+                closeBox();
+                contentContainer.classList.remove('blurred');
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapseButtons = document.querySelectorAll('.card .btn-tool');
+            collapseButtons.forEach(function(button) {
+                button.click();
+            });
+        });
+    </script>
+
+    <script>
+        function dismissNotification(id) {
+            fetch("{% url 'utilisateur:dismiss_notification' %}?prolongement_id=" + id)
+                .then(response => {
+                    if (response.ok) {
+                        var notification = document.getElementById('accepte_' + id);
+                        if (notification) {
+                            notification.style.display = 'none';
+                            var badge = document.querySelector('.badge');
+                            if (badge) {
+                                var count = parseInt(badge.innerText);
+                                if (!isNaN(count) && count > 0) {
+                                    badge.innerText = count - 1;
+                                }
+                            }
+                        }
+                        window.location.href = "{% url 'utilisateur:prolongement_lu_details' %}?prolongement_id=" + id;
+                    }
+                    else {
+                        console.error("Erreur lors de la suppression de la notification");
+                    }
+                })
+                .catch(error => console.error("Erreur lors de la suppression de la notification:", error));
+        }
+    </script>
+    <script>
+        var currentUrl = window.location.href;
+        var loginUrl = "{% url 'utilisateur:connexion_user' %}";
+        if (currentUrl === loginUrl) {
+            var divToHide = document.querySelector('.styles_preview__IERpK');
+            if (divToHide) {
+                divToHide.style.display = 'none';
+            }
+        }
+    </script>
+    <script>
+        function loadEnteteContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    document.getElementById('entete-container').innerHTML = xhr.responseText;
+                } else {
+                    console.error('Erreur de chargement de l\'entête: ' + xhr.statusText);
+                }
+            };
+            xhr.send();
+        }
+        document.querySelectorAll('.entete__link').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                var url = link.getAttribute('href');
+                loadEnteteContent(url);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('.demande-prolongement-form');
+            const submitButton = document.getElementById('submitButtonProlongement');
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                submitButton.disabled = true;
+                submitButton.classList.add('loading');
+                form.submit();
+            });
+        });
+    </script>
+
+    {% include 'footer_conducteur.html' %}
+    </body>
+{% endblock %}

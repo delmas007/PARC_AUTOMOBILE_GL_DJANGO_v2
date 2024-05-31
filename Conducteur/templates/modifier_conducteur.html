@@ -1,0 +1,136 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+<body>
+<!-- loader Start -->
+
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {% include 'slide.html' %}
+    <!-- TOP Nav Bar -->
+    {% include 'top_navbar.html' %}
+    <!-- TOP Nav Bar END -->
+    <!-- Page Content  -->
+    <div id="content-page" class="content-page">
+        <div class="container-fluid">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-9">
+                    <div class="iq-card">
+                        <div class="card-header">
+                            <div class="iq-card-header d-flex justify-content-between">
+                                <div class="iq-header-title">
+                                    <h2 class="card-title">Mise a jour des informations de {{ utilisateur.nom|title }} {{ utilisateur.prenom|title }} {% if utilisateur.conducteur.image%} <img src="{{ conducteur.image.url }}" style=" max-width: 130px;  max-height: 130px; width: auto;  border-radius: 50%;" alt=""/> {% else %} <i class="ri-user-line"></i> {% endif %}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="iq-card-body">
+                            <div class="new-user-info">
+                                <form method="post" enctype="multipart/form-data" action="{% url 'conducteur:modifier_conducteur' conducteur.id %}">
+                                    {% csrf_token %}
+                                    <div class="row ">
+                                        <div class="form-group col-md-6 ">
+                                            <label for="nom">Nom :</label>
+                                            <input type="text" class="form-control" id="nom" placeholder="Nom" name="nom" value="{{ utilisateur.nom }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="prenom">Prénoms :</label>
+                                            <input type="text" class="form-control" id="prenom" placeholder="Prénoms" name="prenom" value="{{ utilisateur.prenom }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="adresse">Adresse :</label>
+                                            <input type="text" class="form-control" id="adresse" placeholder="Adresse" name="adresse" value="{{ conducteur.adresse }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="numero_telephone">Numéro de téléphone :</label>
+                                            <input type="number" class="form-control" id="numero_telephone" placeholder="Numéro de téléphone" name="numero_telephone" value="{{ conducteur.numero_telephone }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="date_de_naissance">Date de naissance :</label>
+                                            <input type="date" class="form-control" id="date_de_naissance" placeholder="Date de naissance" name="date_de_naissance" value="{% if conducteur.date_de_naissance %}{{ conducteur.date_de_naissance|date:'Y-m-d' }}{% endif %}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="date_embauche">Date d'embauche :</label>
+                                            <input type="date" class="form-control" id="date_embauche" placeholder="Date d'embauche" name="date_embauche" value="{% if conducteur.date_embauche %}{{ conducteur.date_embauche|date:'Y-m-d' }}{% endif %}">
+                                        </div>
+
+                                        <div class="form-group col-md-6 ">
+                                            <label for="numero_permis_conduire">Numéro du permis de conduire :</label>
+                                            <input type="text" class="form-control" id="numero_permis_conduire" placeholder="Numéro du permis de conduire" name="numero_permis_conduire" value="{{ conducteur.numero_permis_conduire }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="email">Email :</label>
+                                            <input type="email" class="form-control" id="email" placeholder="email" name="email" value="{{ utilisateur.email }}">
+                                        </div>
+                                        <div class="form-group col-md-6 ">
+                                            <label for="num_cni">Numéro de la carte d'identité :</label>
+                                            <input type="text" class="form-control" id="num_cni" placeholder="Numéro CNI" name="num_cni" value="{{ conducteur.num_cni }}">
+                                        </div>
+                                        <div class="form-group col-md-6 mt-5">
+                                            <input type="file" class="custom-file-input" id="customFile" name="image" value="{{ conducteur.image }}">
+                                            <label class="custom-file-label" for="customFile">Modifier l'image</label>
+                                        </div>
+
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%">Modifier</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'footer.html' %}
+
+<script>
+    {% if form.errors %}
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#successModal').modal('show');
+    });
+    {% endif %}
+
+</script>
+
+<script>
+
+    let today = new Date();
+    let dd = 31;
+    let mm = 12
+    let yyyy = today.getFullYear()-18;
+    let years = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+
+
+    document.getElementById("date_de_naissance").max = today;
+
+
+     let todays = new Date();
+        let day = String(todays.getDate()).padStart(2, '0');
+        let month = String(todays.getMonth() + 1).padStart(2, '0');
+        let year = todays.getFullYear();
+
+        todays = year + '-' + month + '-' + day;
+
+        document.getElementById("date_embauche").max = todays;
+
+</script>
+
+<script>
+    // Écouter les événements clavier sur le champ de numéro de téléphone
+    document.getElementById('numero_telephone').addEventListener('input', function() {
+        var maxLength = 10; // Définir la longueur maximale autorisée
+        var inputValue = this.value; // Récupérer la valeur saisie par l'utilisateur
+
+        // Vérifier si la longueur de la valeur saisie dépasse la longueur maximale autorisée
+        if (inputValue.length > maxLength) {
+            this.value = inputValue.slice(0, maxLength); // Tronquer la valeur saisie pour ne pas dépasser la longueur maximale
+        }
+    });
+
+</script>
+</body>
+{% endblock %}

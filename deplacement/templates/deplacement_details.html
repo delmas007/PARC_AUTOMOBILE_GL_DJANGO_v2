@@ -1,0 +1,206 @@
+
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+        }
+
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .tableau {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th {
+            background-color: #6546d2;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .content-to-export{
+            margin-top: 0;
+        }
+        .zoom-on-hover {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .bouton_telecharger:hover {
+            transform: scale(1.2);
+        }
+    </style>
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="content-page1" class="content-page1">
+                            <div class="content-to-export" id="content-to-export">
+
+                                <div class="tableau" id="tableau" >
+                                    <table class="table" id="table" style="left: auto; right: auto; padding: 20px">
+                                        <thead style="height: 100px; text-align: center; font-size: 25px; color: whitesmoke">
+                                        <tr>
+                                            <th colspan="6" class="text-white">Informations du déplacement en attente de départ <i class="fa fa-paper-plane"></i></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>VÉHICULE :</strong></td>
+                                            <td class="center-text">{{ deplacement.vehicule|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CONDUCTEUR :</strong></td>
+                                            <td class="center-text">{{  deplacement.conducteur|title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DATE DE DÉPART :</strong></td>
+                                            <td class="center-text">{{ deplacement.date_depart }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DESCRIPTION :</strong></td>
+                                            <td class="center-text">{{ deplacement.description }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DURÉE DU DÉPLACEMENT :</strong></td>
+                                            <td class="center-text">{% if deplacement.duree_deplacement > 1 %} {{ deplacement.duree_deplacement }} jours {% else %} {{ deplacement.duree_deplacement }} jour {% endif %}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>KILOMÉTRAGE DE DÉPART :</strong></td>
+                                            <td class="center-text">{{ deplacement.vehicule.kilometrage}} Km/h</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="imageContent"  style="align-items: center; text-align: center;">
+                                    <div>
+                                        <label style="display: block; text-align: center;text-decoration: underline;text-underline: #0b0b0b">JAUGE D'ESSENCE :</label></div>
+                                        <img src="{{ deplacement.photo_jauge_depart.url }}" alt="Image de la jauge" style="height: 250px" onclick="showImagePopup('{{ deplacement.photo_jauge_depart.url }}')">
+                                    </div>
+                                        <div>  <label style="display: block; text-align: center;text-decoration: underline;text-underline: #0b0b0b; margin-top: 10px">PHOTOS DU VÉHICULE AU DÉPART :</label></div>
+                                        {% for image in image %}
+                                            <img src="{{ image.images.url }}" alt="profile-img" class="vehicule-image" onclick="showImagePopup2('{{ image.images.url }}')" style=" display: inline-block;white-space: nowrap;max-width: 20%; height: auto; margin-left: 150px; margin-top: 10px; margin-bottom: 10px">
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <a style="text-align: center; font-size: 50px; margin-left: 50%; margin-right: auto" class="zoom-on-hover iq-bg-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Modifier le déplacement" href="{% url 'deplacement:modifier_deplacement' pk=deplacement.pk %}"><i style="font-size: 60px" class="ri-edit-2-fill"></i></a>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+    <script>
+        function showImagePopup2(imageUrl) {
+            var popupImage = document.createElement('img');
+            popupImage.src = imageUrl;
+            popupImage.style.maxWidth = '80%';
+            popupImage.style.minWidth = '60%';
+            var popupContainer = document.createElement('div');
+            popupContainer.appendChild(popupImage);
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.width = '90%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.left = '50%';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background="transparent";
+            popupContainer.style.padding = '70px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+          function showImagePopup(photo_jauge_departURL) {
+            var popupContainer = document.createElement('div');
+            popupContainer.style.position = 'fixed';
+            popupContainer.style.top = '50%';
+            popupContainer.style.left = '50%';
+            popupContainer.style.width = '50%';
+            popupContainer.style.height = 'auto';
+            popupContainer.style.transform = 'translate(-50%, -50%)';
+            popupContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+            popupContainer.style.padding = '20px';
+            popupContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            popupContainer.style.zIndex = '9999';
+
+            var popupImage = document.createElement('img');
+            popupImage.src = photo_jauge_departURL;
+            popupImage.style.display = 'block';
+            popupImage.style.margin = '0 auto';
+            popupImage.style.maxWidth = '100%';
+            popupImage.style.height = 'auto';
+
+            popupContainer.appendChild(popupImage);
+            document.body.appendChild(popupContainer);
+
+            popupContainer.addEventListener('click', function (event) {
+                if (event.target === popupContainer) {
+                    document.body.removeChild(popupContainer);
+                }
+            });
+        }
+
+    </script>
+    </body>
+{% endblock %}

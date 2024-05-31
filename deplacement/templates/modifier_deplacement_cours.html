@@ -1,0 +1,273 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content%}
+    <body>
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'slide.html' %}
+        <!-- TOP Nav Bar -->
+        {% include 'top_navbar.html' %}
+        <!-- TOP Nav Bar END -->
+        <!-- Page Content  -->
+        <div id="content-page" class="content-page">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-12 col-lg-8">
+                        <div class="iq-card">
+                            <div class="card-header">
+                                <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                        <h2 class="card-title">Modification du déplacement <i class="fa fa-paper-plane"></i></h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="iq-card-body">
+                                <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="id_vehicule">Véhicule :</label>
+                                        <div class="col-sm-9">
+                                            {{ form.vehicule }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="selectConducteur">Conducteur :</label>
+                                        <div class="col-sm-9">
+                                            {{ form.conducteur }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group row " id="images_vehicule" hidden="hidden" style="margin-top: 33px">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="email" style="margin-right: 15px">Modifier les images :</label>
+                                        <div class="form-control col-sm-9" style="border-radius: 10px; padding-bottom: 35px">
+                                            <input   multiple placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="customFile" name="images" >
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row" id="image_jauge" hidden="hidden">
+                                        <label class="control-label col-sm-2 align-self-center mb-0" for="email" style="margin-right: 20px">Modifier la jauge :</label>
+                                        <div class="form-control col-sm-9" style="border-radius: 10px; padding-bottom: 35px">
+                                            <input   placeholder="Choisir une image" type="file" class="form-control-file" accept="image/*"  id="photo_jauge_depart" name="photo_jauge_depart" >
+                                        </div>
+                                        {% if form.photo_jauge_depart.errors %}
+                                            <p class="help-block">Veuillez joindre une image</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        <button type="submit" class="btn btn-primary" style="width: 100%">Enregistrer</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="form-horizontal row">
+                            <textarea class="col-md-6 mr-md-auto" rows="5" hidden="hidden" disabled id="textareaDeplacements"></textarea>
+                            <textarea class="col-md-6 ml-md-auto" rows="5" hidden="hidden" disabled id="textareaDeplacements2" ></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="existImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center " style="text-align: center; font-size: 20px; margin: auto  " id="exampleModalLabel">
+                        Erreur!!!
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="70" height="70" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; transform: translate3d(0px, 0px, 0px); content-visibility: visible;">
+                            <defs><clipPath id="__lottie_element_699">
+                                <rect width="1080" height="1080" x="0" y="0">
+
+                                </rect>
+                            </clipPath>
+                            </defs>
+                            <g clip-path="url(#__lottie_element_699)">
+                                <g transform="matrix(1,0,0,1,539.9979858398438,736.989990234375)" opacity="1" fill="rgb(230,14,14)" font-size="405" font-family="Lato" font-style="normal" font-weight="700" aria-label="!" style="display: block;"><g stroke-linecap="butt" stroke-linejoin="round" stroke-miterlimit="4" transform="matrix(1,0,0,1,-73.00125122070312,0)" opacity="1" style="display: inherit;">
+                                    <g>
+                                        <g transform="matrix(1,0,0,1,0,0)" opacity="1" style="display: block;">
+                                            <path d=" M44.65,-15.49 C46.2,-11.78 48.36,-8.57 51.13,-5.87 C53.9,-3.17 57.17,-1.04 60.95,0.51 C64.73,2.06 68.78,2.84 73.1,2.84 C77.29,2.84 81.27,2.06 85.05,0.51 C88.83,-1.04 92.07,-3.17 94.77,-5.87 C97.47,-8.57 99.63,-11.78 101.25,-15.49 C102.87,-19.2 103.68,-23.22 103.68,-27.54 C103.68,-31.72 102.87,-35.7 101.25,-39.49 C99.63,-43.27 97.47,-46.51 94.77,-49.21 C92.07,-51.9 88.83,-54.07 85.05,-55.69 C81.27,-57.31 77.29,-58.12 73.1,-58.12 C68.78,-58.12 64.73,-57.31 60.95,-55.69 C57.17,-54.07 53.9,-51.9 51.13,-49.21 C48.36,-46.51 46.2,-43.27 44.65,-39.49 C43.1,-35.7 42.32,-31.72 42.32,-27.54 C42.32,-23.22 43.1,-19.2 44.65,-15.49z M50.02,-292.82 C50.02,-292.82 50.02,-176.99 50.02,-176.99 C50.02,-164.7 50.63,-152.65 51.84,-140.84 C53.06,-129.02 54.68,-116.5 56.7,-103.28 C56.7,-103.28 90.52,-103.28 90.52,-103.28 C92.54,-116.5 94.16,-129.02 95.38,-140.84 C96.59,-152.65 97.2,-164.7 97.2,-176.99 C97.2,-176.99 97.2,-292.82 97.2,-292.82 C97.2,-292.82 50.02,-292.82 50.02,-292.82z">
+
+                                            </path>
+                                            <g opacity="1" transform="matrix(4.050000190734863,0,0,4.050000190734863,0,0)">
+
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                                </g>
+                                <g transform="matrix(1.309999942779541,0,0,1.309999942779541,553.0999755859375,585.5198974609375)" opacity="1" style="display: block;">
+                                    <g opacity="1" transform="matrix(1,0,0,1,-10,36)">
+                                        <path stroke-linecap="round" stroke-linejoin="round" fill-opacity="0" stroke="rgb(253,0,0)" stroke-opacity="1" stroke-width="28" d=" M1.7328201929443267e-14,-282.9909973144531 C1.7328201929443267e-14,-282.9909973144531 245.077392578125,141.49549865722656 245.077392578125,141.49549865722656 C245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 -245.077392578125,141.49549865722656 C-245.077392578125,141.49549865722656 1.7328201929443267e-14,-282.9909973144531 1.7328201929443267e-14,-282.9909973144531z">
+
+                                        </path>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </h1>
+                </div>
+                <div class="modal-body text-danger" style="font-size: 30px">
+                    Vous ne pouvez sélectionner que 6 Images
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+
+
+    <script>
+        $(document).ready(function() {
+            $('#selectVehicule').select2();
+        });
+
+        $(document).ready(function() {
+            $('#selectConducteur').select2();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var fileInput = document.getElementById('customFile');
+            fileInput.addEventListener('change', function (event) {
+                var selectedFiles = event.target.files;
+                var maxAllowedFiles = 6;
+                if (selectedFiles.length > maxAllowedFiles) {
+                    $('#existImage').modal('show');
+                    fileInput.value = '';
+                }
+            });
+        });
+    </script>
+    <script>
+        // Récupérer la date actuelle
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January est 0 !
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        // Affecterf la date actuelle comme date minimale
+        document.getElementById("date_depart").min = today;
+    </script>
+
+
+     <script>
+        $(document).ready(function() {
+            $('#selectConducteur').change(function() {
+                var selectedConducteurId = $(this).val();
+                var selectedOption = $(this).find('option:selected'); // Déclarer et récupérer l'élément sélectionné
+                var selectedConducteurText = selectedOption.text(); // Récupérer le texte de l'option sélectionnée
+                // Vérifie si l'identifiant du conducteur est une chaîne non vide
+                if (selectedConducteurId !== '') {
+                    $.ajax({
+                        url: '{% url "deplacement:get_deplacements_data" %}', // Remplacez "nom_de_votre_vue_get_deplacements_data" par le nom de votre vue Django pour récupérer les déplacements
+                        method: 'GET',
+                        data: {
+                            conducteur_id: selectedConducteurId // ID du conducteur sélectionné
+                        },
+                        success: function(response) {
+                            var deplacements = response.deplacements;
+                            if (deplacements.length > 0) {
+                                var textareaContent = 'Déplacements du conducteur ' + selectedConducteurText + ' : \n';
+                                textareaContent += 'Date de départ | Date de fin\n';
+                                textareaContent += '-------------------------\n';
+                                // Construire le contenu du textarea avec les dates et durées des déplacements
+                                deplacements.forEach(function(deplacement) {
+                                    var dateDebut = new Date(deplacement.date_depart);
+                                    var dureeJours = deplacement.duree_deplacement;
+                                    var dateFin = new Date(dateDebut);
+                                    var options = { year: 'numeric', month: 'long', day: 'numeric'};
+                                    dateFin.setDate(dateDebut.getDate() + dureeJours);
+                                    textareaContent += '' + dateDebut.toLocaleDateString('fr-FR', options) + '     |     ' + dateFin.toLocaleDateString('fr-FR', options) + '\n';
+                                });
+                                // Mettre à jour le contenu du textarea
+                                $('#textareaDeplacements').val(textareaContent);
+                                $('#textareaDeplacements').removeAttr('hidden disabled');
+                            } else {
+                                $('#textareaDeplacements').val('');
+                                $('#textareaDeplacements').attr('hidden', true);
+                            }
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log(errmsg);
+                        }
+                    });
+                } else {
+                    // Si aucun conducteur n'est sélectionné, le textarea est vidé
+                    $('#textareaDeplacements').val('');
+                }
+            });
+        });
+
+
+        // Gestionnaire d'événements pour le changement de véhicule
+        $(document).ready(function() {
+            $('#selectVehicule').change(function () {
+                var selectedVehiculeId = $(this).val();
+                var selectedOption = $(this).find('option:selected'); // Déclarer et récupérer l'élément sélectionné
+                var selectedVehiculeText = selectedOption.text(); // Récupérer le texte de l'option sélectionnée
+                // Vérifie si l'identifiant du véhicule est une chaîne non vide
+                if (selectedVehiculeId !== '') {
+                    $.ajax({
+                        url: '{% url "deplacement:get_deplacements_data2" %}', // URL pour récupérer les déplacements du véhicule
+                        method: 'GET',
+                        data: {
+                            vehicule_id: selectedVehiculeId // ID du véhicule sélectionné
+                        },
+                        success: function (response) {
+                            var deplacements = response.deplacements;
+                            if (deplacements.length > 0) {
+                                var textareaContent = 'Indisponibilité du véhicule ' + selectedVehiculeText + ' : \n';
+                                textareaContent += 'Date de départ | Date de fin\n';
+                                textareaContent += '-------------------------\n';
+                                // Construire le contenu du textarea avec les dates et durées des déplacements
+                                deplacements.forEach(function (deplacement) {
+                                    var dateDebut = new Date(deplacement.date_depart);
+                                    var dureeJours = deplacement.duree_deplacement;
+                                    var dateFin = new Date(dateDebut);
+                                    var options = { year: 'numeric', month: 'long', day: 'numeric'};
+                                    dateFin.setDate(dateDebut.getDate() + dureeJours);
+
+                                    textareaContent += '' + dateDebut.toLocaleDateString('fr-FR', options) + '     |     ' + dateFin.toLocaleDateString('fr-FR', options) + '\n';
+                                });
+                                // Mettre à jour le contenu du textarea
+                                $('#textareaDeplacements2').val(textareaContent);
+                                $('#textareaDeplacements2').removeAttr('hidden disabled');
+                            } else {
+                                $('#textareaDeplacements2').val('');
+                                $('#textareaDeplacements2').attr('hidden', true);
+                            }
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log(errmsg);
+                        }
+                    });
+                } else {
+                    // Si aucun véhicule n'est sélectionné, le textarea est vidé
+                    $('#textareaDeplacements2').val('');
+                }
+            })
+        })
+        document.addEventListener('DOMContentLoaded', function() {
+            var selectType = document.getElementById('selectVehicule'); // Corrected ID
+            $(selectType).change(function () { // Changed to selectType
+
+                $('#images_vehicule').removeAttr('hidden disabled');
+                $('#image_jauge').removeAttr('hidden disabled');
+
+                 $('#customFile').prop('required', true);
+                 $('#photo_jauge_depart').prop('required', true);
+
+            })
+        });
+    </script>
+    </body>
+{% endblock %}
